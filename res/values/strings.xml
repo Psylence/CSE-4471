@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SecureVote</string>
+    <string name="app_name">Secure Vote</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-
+    <string name="title_activity_main">Secure Vote</string>
+    <string name="title_activity_create_poll">Create Poll</string>
+    <string name="title_activity_view_poll">View Poll</string>
+    
+    <string name="main_create_poll_label">Create Poll</string>
+    <string name="main_poll_list_label">Available Polls</string>
+    
+    <string name="create_poll_title_label">Title</string>
+    <string name="create_poll_desc_label">Description</string>
+    <string name="create_poll_addopt_label">Add Option</string>
+    
+	<string name="view_poll_title_def">&lt;FILLER TITLE&gt;</string>
+	<string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
+	
 </resources>

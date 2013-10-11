@@ -14,13 +14,29 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="edu.osu.AU13.cse4471.securevote.HelloWorldActivity"
-            android:label="@string/app_name" >
+            android:name="edu.osu.AU13.cse4471.securevote.ui.MainActivity"
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="edu.osu.AU13.cse4471.securevote.ui.CreatePoll"
+            android:parentActivityName="edu.osu.AU13.cse4471.securevote.ui.MainActivity"
+            android:label="@string/title_activity_create_poll" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.osu.AU13.cse4471.securevote.ui.MainActivity" />
+        </activity>
+        <activity
+            android:name="edu.osu.AU13.cse4471.securevote.ui.ViewPoll"
+            android:label="@string/title_activity_view_poll"
+            android:parentActivityName="edu.osu.AU13.cse4471.securevote.ui.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.osu.AU13.cse4471.securevote.ui.MainActivity" />
         </activity>
     </application>
 
