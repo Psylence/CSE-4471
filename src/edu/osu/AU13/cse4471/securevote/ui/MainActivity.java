@@ -1,5 +1,8 @@
 package edu.osu.AU13.cse4471.securevote.ui;
 
+import java.math.BigInteger;
+import java.util.Collections;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +16,12 @@ import android.widget.ListView;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
+import edu.osu.AU13.cse4471.securevote.Voter;
+import edu.osu.AU13.cse4471.securevote.math.CyclicGroup;
+import edu.osu.AU13.cse4471.securevote.math.IntegersModM;
 
 public class MainActivity extends Activity {
-  public static final String DATA_NAME_POLL =
-      "edu.osu.AU13.cse4471.securevote.POLL";
+  public static final String DATA_NAME_POLL = "edu.osu.AU13.cse4471.securevote.POLL";
   private ListView mPollList;
   private Button mCreatePoll;
 
@@ -29,10 +34,11 @@ public class MainActivity extends Activity {
     mCreatePoll = (Button) findViewById(R.id.create_poll);
     final Activity context = this;
 
-    ArrayAdapter<Poll> adapter =
-        new ArrayAdapter<Poll>(this, android.R.layout.simple_list_item_1);
-    for (Poll p : makeSamplePolls())
+    ArrayAdapter<Poll> adapter = new ArrayAdapter<Poll>(this,
+        android.R.layout.simple_list_item_1);
+    for (Poll p : makeSamplePolls()) {
       adapter.add(p);
+    }
     mPollList.setAdapter(adapter);
     mPollList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
@@ -47,7 +53,7 @@ public class MainActivity extends Activity {
 
         Poll poll = (Poll) item;
         Intent intent = new Intent(context, ViewPoll.class);
-        intent.putExtra(DATA_NAME_POLL, poll.getId());
+        intent.putExtra(MainActivity.DATA_NAME_POLL, poll.getId());
         startActivity(intent);
       }
     });
@@ -70,10 +76,13 @@ public class MainActivity extends Activity {
 
   private Poll[] makeSamplePolls() {
     Poll[] ret = new Poll[16];
+    CyclicGroup gp = new IntegersModM(BigInteger.valueOf(17));
 
     for (int i = 0; i < 16; i++) {
-      Poll p = new Poll(i, "Poll " + (i + 1));
-      PollDB.getInstance(this).putPoll(p);
+      Poll p = new Poll(i, "Poll " + (i + 1), "desc",
+          Collections.<Voter> emptyList(), gp, gp.getRandomGenerator(),
+          gp.getRandomGenerator());
+      PollDB.getInstance().putPoll(p);
       ret[i] = p;
     }
     return ret;

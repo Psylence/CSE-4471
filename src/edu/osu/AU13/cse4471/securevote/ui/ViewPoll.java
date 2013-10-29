@@ -25,10 +25,9 @@ public class ViewPoll extends Activity {
     setupActionBar();
 
     Intent intent = getIntent();
-    int id =
-        intent != null ? intent.getIntExtra(MainActivity.DATA_NAME_POLL, -1)
-            : -1;
-    Poll poll = PollDB.getInstance(this).getPoll(id);
+    int id = intent != null ? intent.getIntExtra(MainActivity.DATA_NAME_POLL,
+        -1) : -1;
+    Poll poll = PollDB.getInstance().getPoll(id);
 
     if (id != -1 && poll != null) {
       mTitle = (TextView) findViewById(R.id.view_poll_title);
