@@ -68,6 +68,22 @@ public class IntegersModM extends CyclicGroup {
   }
 
   @Override
+  public GroupElement elementFromString(String s) {
+    if (s.startsWith("[") && s.endsWith("]")) {
+      try {
+        return new Elem(new BigInteger(s.substring(1, s.length() - 1)));
+      } catch (NumberFormatException e) {
+      }
+    }
+    throw new IllegalArgumentException(
+        "'"
+            + s
+            + "' is not a valid encoding of a group element in the group of integers mod "
+            + modulus);
+
+  }
+
+  @Override
   protected BigInteger[] getParameters() {
     return new BigInteger[] { modulus };
   }

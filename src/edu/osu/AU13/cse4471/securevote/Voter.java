@@ -12,16 +12,6 @@ public class Voter extends User {
     super(email, poll);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return o instanceof Voter && ((Voter) o).getEmail().equals(this.getEmail());
-  }
-
-  @Override
-  public int hashCode() {
-    return this.getEmail().hashCode();
-  }
-
   /**
    * Serialize this Voter to a String, suitable for saving in a file or
    * database, and later reconstructing via {@link #fromString}..

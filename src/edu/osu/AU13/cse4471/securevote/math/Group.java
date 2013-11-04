@@ -61,16 +61,18 @@ public abstract class Group {
    * @return <i>g<sup>n</sup></i>
    */
   public GroupElement exponent(GroupElement g, BigInteger n) {
-    if (this != g.getGroup())
+    if (this != g.getGroup()) {
       throw new IllegalArgumentException(g.toString()
           + " does not belong to group " + toString());
+    }
 
-    if (n.signum() == 0)
+    if (n.signum() == 0) {
       return identity();
-    else if (n.signum() < 0)
+    } else if (n.signum() < 0) {
       return exponentImpl(inverse(g), n.negate());
-    else
+    } else {
       return exponentImpl(g, n);
+    }
   }
 
   /**
@@ -153,8 +155,9 @@ public abstract class Group {
     sb.append('[').append(name).append(';');
 
     for (int i = 0; i < params.length; i++) {
-      if (i > 0)
+      if (i > 0) {
         sb.append(',');
+      }
       sb.append(params[i].toString());
     }
 
@@ -197,7 +200,8 @@ public abstract class Group {
         // and report the failure via IllegalArgumentException.
         try {
           Class<?> clazz = Class.forName(name);
-          Constructor<?> ctor = clazz.getConstructor(getArgList(params.length));
+          Constructor<?> ctor = clazz.getConstructor(Group
+              .getArgList(params.length));
 
           // Make sure the class we're creating is actually a Group
           if (Group.class.isAssignableFrom(clazz)) {
@@ -227,6 +231,17 @@ public abstract class Group {
     throw new IllegalArgumentException(s
         + " is not a String representation of a group");
   }
+
+  /**
+   * Reconstruct a GroupElement belonging to this group from a stirng
+   * representation.
+   * 
+   * @param s
+   *          A string representation, as returned by the toString method of an
+   *          element belonging to this group
+   * @return the group element
+   */
+  public abstract GroupElement elementFromString(String s);
 
   /**
    * Helper method used by {@link #fromString} used to reflectively find a
