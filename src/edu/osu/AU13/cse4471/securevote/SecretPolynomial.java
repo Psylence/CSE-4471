@@ -1,5 +1,6 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class SecretPolynomial {
@@ -20,7 +21,7 @@ public class SecretPolynomial {
 		this.secret = secret;
 		
 		// Create some random integer coefficents from which to construct the points
-		Random rng = new Random();
+		SecureRandom rng = new SecureRandom();
 		int[] coefficents = new int[order];
 		for(int i = 0; i < order; i++) {
 			coefficents[i] = rng.nextInt();
