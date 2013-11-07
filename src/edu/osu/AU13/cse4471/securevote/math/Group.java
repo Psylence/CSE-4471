@@ -33,6 +33,8 @@ public abstract class Group {
    * @return
    */
   public abstract GroupElement identity();
+  
+  public abstract GroupElement getRandomElement();
 
   /**
    * Computes <i>a*b</i> in this group.

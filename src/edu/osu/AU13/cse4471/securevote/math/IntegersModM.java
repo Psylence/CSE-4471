@@ -22,6 +22,19 @@ public class IntegersModM extends CyclicGroup {
     }
     modulus = mod;
   }
+  
+  @Override
+  public GroupElement getRandomElement() {
+	BigInteger result;
+	SecureRandom s = new SecureRandom();
+	byte[] bytes = new byte[modulus.bitLength() * 8 + 1];
+
+    s.nextBytes(bytes);
+    result = new BigInteger(bytes);
+	
+	return new Elem(result);
+	  
+  }
 
   @Override
   public GroupElement getRandomGenerator() {
