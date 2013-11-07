@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import android.util.SparseBooleanArray;
+
 /**
  * <p>
  * Note: Real database isn't implemented yet. This is a temporary "database" for
@@ -85,5 +87,19 @@ public class PollDB {
       }
     }
     mPolls.add(p);
+  }
+
+  public int getUnusedId() {
+    SparseBooleanArray idInUse = new SparseBooleanArray(mPolls.size());
+    for (Poll p : mPolls) {
+      idInUse.put(p.getId(), true);
+    }
+
+    int i;
+    for (i = 0; idInUse.get(i) == true; i++) {
+      /* This loop intentionally left blank */
+    }
+
+    return i;
   }
 }

@@ -16,6 +16,7 @@ import android.widget.ListView;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
+import edu.osu.AU13.cse4471.securevote.Tallier;
 import edu.osu.AU13.cse4471.securevote.Voter;
 import edu.osu.AU13.cse4471.securevote.math.CyclicGroup;
 import edu.osu.AU13.cse4471.securevote.math.IntegersModM;
@@ -80,8 +81,8 @@ public class MainActivity extends Activity {
 
     for (int i = 0; i < 16; i++) {
       Poll p = new Poll(i, "Poll " + (i + 1), "desc",
-          Collections.<Voter> emptyList(), gp, gp.getRandomGenerator(),
-          gp.getRandomGenerator());
+          Collections.<Voter> emptyList(), Collections.<Tallier> emptyList(),
+          gp, gp.getRandomGenerator(), gp.getRandomGenerator());
       PollDB.getInstance().putPoll(p);
       ret[i] = p;
     }

@@ -32,12 +32,11 @@ public class Poll {
    */
   private List<Voter> voters;
 
-  // TODO Implement Tallier class
-  /*
-   * List of talliers in this poll.
-   * 
-   * private List<Tallier> talliers;
+  /**
+   * List of talliers in this poll. These are the users to whom results are sent
+   * to be decoded.
    */
+  private List<Tallier> talliers;
 
   /**
    * Group used for encryption in this poll
@@ -50,14 +49,34 @@ public class Poll {
    */
   private GroupElement g, G;
 
+  /**
+   * Create a new Poll object
+   * 
+   * @param id
+   *          unique identifier
+   * @param title
+   *          Display title
+   * @param desc
+   *          Display description
+   * @param voters
+   *          List of voters
+   * @param talliers
+   *          List of talliers
+   * @param group
+   *          Group to use for cryptography
+   * @param g
+   *          Group generator
+   * @param G
+   *          Another group generator
+   */
   public Poll(int id, String title, String desc, List<Voter> voters,
-      Group group, GroupElement g, GroupElement G) {
+      List<Tallier> talliers, Group group, GroupElement g, GroupElement G) {
     if (id == -1) {
       throw new IllegalArgumentException("Poll cannot have an ID of -1");
     }
 
-    if (title == null || desc == null || group == null || g == null
-        || G == null) {
+    if (title == null || desc == null || voters == null || talliers == null
+        || group == null || g == null || G == null) {
       throw new NullPointerException();
     }
 
@@ -66,10 +85,16 @@ public class Poll {
           "Poll parameters g and G must both belong to group");
     }
 
+    if (voters.isEmpty() || talliers.isEmpty()) {
+      throw new IllegalArgumentException(
+          "Cannot create a poll with no voters or with no talliers");
+    }
+
     this.id = id;
     this.title = title;
     this.desc = desc;
     this.voters = Collections.unmodifiableList(voters);
+    this.talliers = Collections.unmodifiableList(talliers);
     this.group = group;
     this.g = g;
     this.g = G;
@@ -139,5 +164,9 @@ public class Poll {
    */
   public List<Voter> getVoters() {
     return voters;
+  }
+
+  public List<Tallier> getTalliers() {
+    return talliers;
   }
 }

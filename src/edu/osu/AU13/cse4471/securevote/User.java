@@ -64,4 +64,19 @@ public abstract class User {
   public void sendEmail(Void... args) {
     return;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o.getClass().equals(this.getClass())) {
+      User u = (User) o;
+      return email.equals(u.email) && poll.equals(u.poll);
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getClass().hashCode() ^ email.hashCode() ^ poll.hashCode();
+  }
 }
