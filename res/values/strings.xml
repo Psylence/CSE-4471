@@ -6,15 +6,36 @@
     <string name="title_activity_main">Secure Vote</string>
     <string name="title_activity_create_poll">Create Poll</string>
     <string name="title_activity_view_poll">View Poll</string>
-    
     <string name="main_create_poll_label">Create Poll</string>
     <string name="main_poll_list_label">Available Polls</string>
-    
     <string name="create_poll_title_label">Title</string>
     <string name="create_poll_desc_label">Description</string>
     <string name="create_poll_addopt_label">Add Option</string>
-    
-	<string name="view_poll_title_def">&lt;FILLER TITLE&gt;</string>
-	<string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
-	
+    <string name="view_poll_title_def">&lt;FILLER TITLE&gt;</string>
+    <string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
+    <string name="create_poll_options_label">Options</string>
+    <string name="create_poll_options_prompt">Vote between&#8230;</string>
+    <string name="create_poll_talliers_label">Talliers</string>
+    <string name="create_poll_voters_label">Voters</string>
+    <string name="create_poll_talliers_same_label">Same as voters</string>
+    <string name="create_poll_edit_voter_label">Edit</string>
+    <string name="create_poll_edit_tallier_label">Edit</string>
+    <string name="create_poll_voters_empty">No voters selected</string>
+    <string name="create_poll_talliers_empty">No talliers selected</string>
+    <string name="email_dialog_default_title">Enter emails</string>
+    <string name="email_dialog_message">Enter an email address</string>
+    <string name="email_dialog_hint">email</string>
+    <string name="create_poll_add_voter_dialog_title">Add Voter</string>
+    <string name="create_poll_add_tallier_dialog_title">Add Tallier</string>
+    <string name="title_activity_email">EmailActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_enter_email">Enter Emails</string>
+    <string name="email_add_label">Add</string>
+    <string name="email_add_dialog_title">Enter email</string>
+    <string name="email_add_dialog_message">Enter the email address of the user whom you want to add.  Throughout the poll, the user will be identified by this email address.</string>
+    <string name="email_add_dialog_hint">email</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="email_edit_dialog_title">Edit email</string>
+
 </resources>

@@ -33,8 +33,8 @@
         </activity>
         <activity
             android:name="edu.osu.AU13.cse4471.securevote.ui.CreatePoll"
-            android:parentActivityName="edu.osu.AU13.cse4471.securevote.ui.MainActivity"
-            android:label="@string/title_activity_create_poll" >
+            android:label="@string/title_activity_create_poll"
+            android:parentActivityName="edu.osu.AU13.cse4471.securevote.ui.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.osu.AU13.cse4471.securevote.ui.MainActivity" />
@@ -46,6 +46,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.osu.AU13.cse4471.securevote.ui.MainActivity" />
+        </activity>
+        <activity
+            android:name="edu.osu.AU13.cse4471.securevote.EnterEmailActivity"
+            android:label="@string/title_activity_enter_email"
+            android:parentActivityName="edu.osu.AU13.cse4471.securevote.ui.CreatePoll" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.osu.AU13.cse4471.securevote.ui.CreatePoll" />
         </activity>
     </application>
 
