@@ -110,6 +110,13 @@ public class Poll implements JSONSerializable {
     this.g = G;
   }
 
+  /**
+   * Deserialize a Poll from a JSONObject.
+   * 
+   * @param obj
+   *          JSONObject as returned by {@link toJson()}.
+   * @throws IllegalArgumentException
+   */
   public Poll(JSONObject obj) throws IllegalArgumentException {
     try {
       id = UUID.fromString(obj.getString(Poll.JSON_ID));

@@ -13,11 +13,25 @@ public class Tallier extends User implements JSONSerializable {
 
   private GroupElement pubKey;
 
+  /**
+   * Create a Tallier with the given email, belonging to the given Poll
+   * 
+   * @param email
+   * @param poll
+   */
   public Tallier(String email, Poll poll) {
     super(email, poll);
     pubKey = null;
   }
 
+  /**
+   * Create a Taillier with the given email, belonging to the given poll, with
+   * the given public key
+   * 
+   * @param email
+   * @param poll
+   * @param pubKey
+   */
   public Tallier(String email, Poll poll, GroupElement pubKey) {
     super(email, poll);
     this.pubKey = pubKey;
@@ -36,9 +50,24 @@ public class Tallier extends User implements JSONSerializable {
     return obj;
   }
 
+  /**
+   * Class used to convert JSON back into a tallier. Note: the Poll supplied in
+   * the constructor must (at least) have a valid group accessible via
+   * {@link Poll#getGroup()}.
+   * 
+   * @author andrew
+   * 
+   */
   public static class TallierDeserializer implements JSONDeserializer<Tallier> {
     private Poll mPoll;
 
+    /**
+     * Create a new deserializer, which associates Talliers with the given poll.
+     * The Poll must (at least) have a valid group accessible via
+     * {@link Poll#getGroup()}.
+     * 
+     * @param p
+     */
     public TallierDeserializer(Poll p) {
       mPoll = p;
     }
