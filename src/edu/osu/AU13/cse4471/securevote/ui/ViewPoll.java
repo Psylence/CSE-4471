@@ -1,5 +1,7 @@
 package edu.osu.AU13.cse4471.securevote.ui;
 
+import java.util.UUID;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,11 +27,18 @@ public class ViewPoll extends Activity {
     setupActionBar();
 
     Intent intent = getIntent();
-    int id = intent != null ? intent.getIntExtra(MainActivity.DATA_NAME_POLL,
-        -1) : -1;
-    Poll poll = PollDB.getInstance().getPoll(id);
+    UUID id = null;
+    Poll poll = null;
+    try {
+      id = UUID.fromString(intent.getStringExtra(MainActivity.DATA_NAME_POLL));
+    } catch (NullPointerException e) {
+    }
 
-    if (id != -1 && poll != null) {
+    if (id != null) {
+      poll = PollDB.getInstance().getPoll(id);
+    }
+
+    if (id != null && poll != null) {
       mTitle = (TextView) findViewById(R.id.view_poll_title);
 
       mTitle.setText(poll.toString());

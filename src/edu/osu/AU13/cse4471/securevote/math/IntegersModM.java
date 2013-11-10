@@ -22,18 +22,18 @@ public class IntegersModM extends CyclicGroup {
     }
     modulus = mod;
   }
-  
+
   @Override
   public GroupElement getRandomElement() {
-	BigInteger result;
-	SecureRandom s = new SecureRandom();
-	byte[] bytes = new byte[modulus.bitLength() * 8 + 1];
+    BigInteger result;
+    SecureRandom s = new SecureRandom();
+    byte[] bytes = new byte[modulus.bitLength() * 8 + 1];
 
     s.nextBytes(bytes);
     result = new BigInteger(bytes);
-	
-	return new Elem(result);
-	  
+
+    return new Elem(result);
+
   }
 
   @Override
@@ -105,6 +105,9 @@ public class IntegersModM extends CyclicGroup {
     final BigInteger n;
 
     Elem(BigInteger n) {
+      if (n.compareTo(modulus) > 0 || n.signum() < 0) {
+        n = n.mod(modulus);
+      }
       this.n = n;
     }
 

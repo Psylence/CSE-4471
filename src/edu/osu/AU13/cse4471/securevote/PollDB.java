@@ -4,37 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import android.util.SparseBooleanArray;
+import java.util.UUID;
 
 /**
- * <p>
- * Note: Real database isn't implemented yet. This is a temporary "database" for
- * testing purposes only.
- * </p>
- * <p>
- * This class handles storing polls to the database and reading them back from
- * it. No other classes should modify the database directly; all access should
- * be encapsulated within this class.
- * </p>
- * <p>
- * This class supports asynchronous database access. As soon as the instance is
- * first access, a database connection is launched in a background thread.
- * Client classes can query whether the database is available yet via the
- * {@link #arePollsAvailable()} method. If the polls are available, clients may
- * access them via either {@link #getPolls()} or {@link #getPollById(int)}. All
- * of these methods may be called from any thread or activity.
- * </p>
- * <p>
- * Furthermore, if the polls aren't loaded yet (eg because of a long-running
- * database upgrade), clients can register callbacks that will execute once the
- * polls become available, using the {@link #onPollsAvailable} method. If the
- * polls are already loaded, this callback will be called immediately.
- * Otherwise, the system will delay until the polls are ready. In either case,
- * the callback will be called in the same thread that called
- * {@link #onPollsAvailable}. This thread is required to have an Android Looper
- * (eg, it must be an activity UI thread).
- * </p>
+ * Mock DB used to store polls. Will eventually save poll data to filesystem.
  * 
  * @author andrew
  * 
@@ -66,11 +39,11 @@ public class PollDB {
     return Collections.unmodifiableList(mPolls);
   }
 
-  public Poll getPoll(int id) {
+  public Poll getPoll(UUID id) {
     List<Poll> list = getPolls();
 
     for (Poll p : list) {
-      if (p.getId() == id) {
+      if (p.getId().equals(id)) {
         return p;
       }
     }
@@ -87,19 +60,5 @@ public class PollDB {
       }
     }
     mPolls.add(p);
-  }
-
-  public int getUnusedId() {
-    SparseBooleanArray idInUse = new SparseBooleanArray(mPolls.size());
-    for (Poll p : mPolls) {
-      idInUse.put(p.getId(), true);
-    }
-
-    int i;
-    for (i = 0; idInUse.get(i) == true; i++) {
-      /* This loop intentionally left blank */
-    }
-
-    return i;
   }
 }

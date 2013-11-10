@@ -1,5 +1,6 @@
 package edu.osu.AU13.cse4471.securevote;
 
+
 /**
  * Common base class for users and talliers.
  * 

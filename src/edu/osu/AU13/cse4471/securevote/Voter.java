@@ -1,8 +1,14 @@
 package edu.osu.AU13.cse4471.securevote;
 
-import java.util.Locale;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Voter extends User {
+import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
+import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
+
+public class Voter extends User implements JSONSerializable {
+  private static final String JSON_EMAIL = "email";
+
   /**
    * Create a Voter, assigned the given email address
    * 
@@ -12,45 +18,28 @@ public class Voter extends User {
     super(email, poll);
   }
 
-  /**
-   * Serialize this Voter to a String, suitable for saving in a file or
-   * database, and later reconstructing via {@link #fromString}..
-   * 
-   * @return a string representation of this Voter object
-   */
   @Override
-  public String toString() {
-    return String.format(Locale.US, "[Voter:%d,%s]", this.getPoll().getId(),
-        this.getEmail());
+  public JSONObject toJson() throws JSONException {
+    JSONObject obj = new JSONObject();
+
+    obj.put(Voter.JSON_EMAIL, getEmail());
+
+    return obj;
   }
 
-  /**
-   * Reconstruct a Voter from the output of toString.
-   * 
-   * @param fromString
-   *          a string representation of a Voter, as returned by toString
-   * @return A reconstructed Voter object
-   */
-  public static Voter fromString(String s) {
-    if (s.startsWith("[Voter:") && s.endsWith("]")) {
-      String[] pollAndEmail = s.substring("[Voter:".length(), s.length() - 1)
-          .split(",", 2);
-      if (pollAndEmail.length == 2) {
-        int pollId = -1;
-        try {
-          pollId = Integer.valueOf(pollAndEmail[0]);
-        } catch (NumberFormatException e) {
+  public static class VoterDeserializer implements JSONDeserializer<Voter> {
+    private final Poll mPoll;
 
-        }
-
-        String email = pollAndEmail[1];
-
-        if (pollId != -1) {
-          return new Voter(email, PollDB.getInstance().getPoll(pollId));
-        }
-      }
+    public VoterDeserializer(Poll p) {
+      mPoll = p;
     }
-    throw new IllegalArgumentException("'" + s
-        + "' is not a valid encoding of Voter");
+
+    @Override
+    public Voter fromJson(JSONObject obj) throws JSONException,
+        IllegalArgumentException {
+      String email = obj.getString(Voter.JSON_EMAIL);
+
+      return new Voter(email, mPoll);
+    }
   }
 }

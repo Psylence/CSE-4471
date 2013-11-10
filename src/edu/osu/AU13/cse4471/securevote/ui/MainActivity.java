@@ -1,10 +1,13 @@
 package edu.osu.AU13.cse4471.securevote.ui;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
@@ -66,6 +70,23 @@ public class MainActivity extends Activity {
         startActivity(intent);
       }
     });
+
+    Intent intent = getIntent();
+    if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
+      Uri uri = intent.getData();
+      if (uri != null && uri.getScheme().equals("file")) {
+        File f = new File(uri.getPath());
+        if (f.canRead()) {
+          processEmailAttachment(f);
+        }
+      }
+    }
+  }
+
+  private void processEmailAttachment(File f) {
+    Toast
+        .makeText(this, "Load file " + f.getAbsolutePath(), Toast.LENGTH_SHORT)
+        .show();
   }
 
   @Override
@@ -80,9 +101,10 @@ public class MainActivity extends Activity {
     CyclicGroup gp = new IntegersModM(BigInteger.valueOf(17));
 
     for (int i = 0; i < 16; i++) {
-      Poll p = new Poll(i, "Poll " + (i + 1), "desc",
-          Collections.<Voter> emptyList(), Collections.<Tallier> emptyList(),
-          gp, gp.getRandomGenerator(), gp.getRandomGenerator());
+      Poll p = new Poll(new UUID(0, i), "Poll " + (i + 1), "desc",
+          Collections.<Voter> singletonList(null),
+          Collections.<Tallier> singletonList(null), gp,
+          gp.getRandomGenerator(), gp.getRandomGenerator());
       PollDB.getInstance().putPoll(p);
       ret[i] = p;
     }
