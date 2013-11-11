@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="create_poll_title_label">Title</string>
+    <string name="create_poll_desc_label">Description</string>
+    <string name="create_poll_addopt_label">Add Option</string>
+    <string name="create_poll_options_label">Options</string>
+    <string name="create_poll_options_prompt">Vote between&#8230;</string>
+    <string name="create_poll_talliers_label">Talliers</string>
+    <string name="create_poll_voters_label">Voters</string>
+    <string name="create_poll_talliers_same_label">Same as voters</string>
+    <string name="create_poll_edit_voter_label">Edit</string>
+    <string name="create_poll_edit_tallier_label">Edit</string>
+    <string name="create_poll_voters_empty">No voters selected</string>
+    <string name="create_poll_talliers_empty">No talliers selected</string>
+    <string name="create_poll_add_voter_dialog_title">Add Voter</string>
+    <string name="create_poll_add_tallier_dialog_title">Add Tallier</string>
+    <string name="create_poll_error_no_title">Error: Title is required</string>
+    <string name="create_poll_error_no_voters">Error: At least one voter is required</string>
+    <string name="create_poll_error_no_talliers">Error: At least one tallier is required</string>
+
+</resources>

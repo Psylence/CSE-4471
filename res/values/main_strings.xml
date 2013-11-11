@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_create_poll_label">Create Poll</string>
+    <string name="main_poll_list_label">Available Polls</string>
+</resources>

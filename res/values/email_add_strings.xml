@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="email_add_label">Add</string>
+    <string name="email_add_dialog_title">Enter email</string>
+    <string name="email_add_dialog_message">Enter the email address of the user whom you want to add.  Throughout the poll, the user will be identified by this email address.</string>
+    <string name="email_add_dialog_hint">email</string>
+    <string name="email_edit_dialog_title">Edit email</string>
+    <string name="email_dialog_default_title">Enter emails</string>
+    <string name="email_dialog_message">Enter an email address</string>
+    <string name="email_dialog_hint">email</string>
+</resources>
