@@ -52,7 +52,7 @@ public abstract class Group {
 
   public abstract GroupElement inverse(GroupElement g)
       throws IllegalArgumentException;
-
+  
   /**
    * Computes <i>g<sup>n</sup></i> in this group.
    * 

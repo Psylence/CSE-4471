@@ -115,6 +115,11 @@ public class IntegersModM extends CyclicGroup {
     public Group getGroup() {
       return IntegersModM.this;
     }
+    
+    @Override
+    public BigInteger getValue() {
+    	return n;
+    }
 
     @Override
     public int hashCode() {

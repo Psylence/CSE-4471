@@ -9,6 +9,8 @@ public abstract class GroupElement {
    * @return The group to which this element belongs
    */
   public abstract Group getGroup();
+  
+  public abstract BigInteger getValue();
 
   /**
    * Compute <i>this*other</i>
@@ -51,4 +53,5 @@ public abstract class GroupElement {
   public final GroupElement exp(BigInteger n) {
     return getGroup().exponent(this, n);
   }
+  
 }
