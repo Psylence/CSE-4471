@@ -98,13 +98,11 @@ public class MainActivity extends Activity {
 
   private Poll[] makeSamplePolls() {
     Poll[] ret = new Poll[16];
-    CyclicGroup gp = new IntegersModM(BigInteger.valueOf(17));
 
     for (int i = 0; i < 16; i++) {
       Poll p = new Poll(new UUID(0, i), "Poll " + (i + 1), "desc",
           Collections.<Voter> singletonList(null),
-          Collections.<Tallier> singletonList(null), gp,
-          gp.getRandomGenerator(), gp.getRandomGenerator());
+          Collections.<Tallier> singletonList(null));
       PollDB.getInstance().putPoll(p);
       ret[i] = p;
     }

@@ -1,5 +1,7 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -8,13 +10,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
+import edu.osu.AU13.cse4471.securevote.math.CyclicGroup;
 import edu.osu.AU13.cse4471.securevote.math.Group;
 import edu.osu.AU13.cse4471.securevote.math.GroupElement;
+import edu.osu.AU13.cse4471.securevote.math.IntegersModM;
+import edu.osu.AU13.cse4471.securevote.math.IntegersModPrimePower;
 
 /**
  * This class represents a poll known to a single client.
  */
 public class Poll implements JSONSerializable {
+  private static final int SANITY_BOUND = 100000;
+	
   private static final String JSON_ID = "id";
   private static final String JSON_TITLE = "title";
   private static final String JSON_DESC = "desc";
@@ -84,15 +91,10 @@ public class Poll implements JSONSerializable {
    *          Another group generator
    */
   public Poll(UUID id, String title, String desc, List<Voter> voters,
-      List<Tallier> talliers, Group group, GroupElement g, GroupElement G) {
+      List<Tallier> talliers) {
     if (id == null || title == null || desc == null || voters == null
         || talliers == null || group == null || g == null || G == null) {
       throw new NullPointerException();
-    }
-
-    if (!g.getGroup().equals(group) || !G.getGroup().equals(group)) {
-      throw new IllegalArgumentException(
-          "Poll parameters g and G must both belong to group");
     }
 
     if (voters.isEmpty() || talliers.isEmpty()) {
@@ -105,9 +107,18 @@ public class Poll implements JSONSerializable {
     this.desc = desc;
     this.voters = Collections.unmodifiableList(voters);
     this.talliers = Collections.unmodifiableList(talliers);
-    this.group = group;
-    this.g = g;
-    this.g = G;
+    
+    IntegersModPrimePower gp = IntegersModPrimePower.generateRandom();
+    this.group = gp;
+    
+    // Create generators
+    this.g = gp.getRandomGenerator();
+    int sanity = 0;
+    do {
+    	this.G = gp.getRandomGenerator();
+    	sanity++;
+    } while(!g.equals(G) && sanity < SANITY_BOUND);
+    if(sanity == SANITY_BOUND) throw new RuntimeException("Failed to create two different generators.");
   }
 
   /**

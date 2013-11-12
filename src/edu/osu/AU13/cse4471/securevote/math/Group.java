@@ -34,8 +34,19 @@ public abstract class Group {
    */
   public abstract GroupElement identity();
   
+  /**
+   * Returns a random element of this group
+   */
   public abstract GroupElement getRandomElement();
 
+  /**
+   * Returns a bounded random element of this group
+   * 
+   * @param bound
+   * @return An element in the range <code>[0,bound)</code>
+   */
+  public abstract GroupElement getRandomElement(BigInteger bound);
+  
   /**
    * Computes <i>a*b</i> in this group.
    * 

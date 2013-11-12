@@ -16,35 +16,38 @@ public class IntegersModM extends CyclicGroup {
   private final BigInteger modulus;
 
   public IntegersModM(BigInteger mod) {
-    if (mod.signum() < 0 || mod.equals(BigInteger.ONE)) {
-      throw new IllegalArgumentException(
-          "Can't/don't want to consider the group of integers mod " + mod);
-    }
     modulus = mod;
   }
-
+  
   @Override
   public GroupElement getRandomElement() {
+    return getRandomElement(modulus);
+  }
+  
+  @Override
+  public GroupElement getRandomElement(BigInteger bound) {
     BigInteger result;
     SecureRandom s = new SecureRandom();
-    byte[] bytes = new byte[modulus.bitLength() * 8 + 1];
+    byte[] bytes = new byte[bound.bitLength() / 8 + 1];
 
+    // Bound the most significant byte
     s.nextBytes(bytes);
+    if(bound.toByteArray()[0] != Byte.MAX_VALUE)
+    	bytes[0] = (byte)s.nextInt(bound.toByteArray()[0]);
+    else
+    	bytes[0] = 0;
+    
     result = new BigInteger(bytes);
 
     return new Elem(result);
-
   }
 
   @Override
   public GroupElement getRandomGenerator() {
-    BigInteger cand;
-    SecureRandom s = new SecureRandom();
-    byte[] bytes = new byte[modulus.bitLength() * 8 + 1];
-
+	
+	BigInteger cand;  
     do {
-      s.nextBytes(bytes);
-      cand = new BigInteger(bytes);
+      cand = getRandomElement().getValue();
     } while (!cand.gcd(modulus).equals(BigInteger.ONE));
 
     // Guaranteed: cand is coprime to modulus (i.e., the only positive number

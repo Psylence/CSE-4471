@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 
 import edu.osu.AU13.cse4471.securevote.math.CyclicGroup;
 import edu.osu.AU13.cse4471.securevote.math.GroupElement;
+import edu.osu.AU13.cse4471.securevote.math.IntegersModPrimePower;
 
 public class PrivateKey {
   private GroupElement generator;
@@ -12,15 +13,11 @@ public class PrivateKey {
 
   private PublicKey publicKey = null;
 
-  public PrivateKey(CyclicGroup group) {
+  public PrivateKey(IntegersModPrimePower group) {
     generator = group.getRandomGenerator();
 
     // Get a random large integer
-    SecureRandom s = new SecureRandom();
-    byte[] bytes = new byte[32]; // 32 is arbitrary; need a way to bound this to p
-    
-    s.nextBytes(bytes);
-    privateKey = new BigInteger(bytes);
+    privateKey = group.getRandomElement(group.getPrime()).getValue();
 
     // Generate the public key
     GroupElement key = group.exponent(generator, privateKey);
