@@ -30,14 +30,9 @@ public class IntegersModM extends CyclicGroup {
     SecureRandom s = new SecureRandom();
     byte[] bytes = new byte[bound.bitLength() / 8 + 1];
 
-    // Bound the most significant byte
+    // Get a new random number
     s.nextBytes(bytes);
-    if(bound.toByteArray()[0] != Byte.MAX_VALUE)
-    	bytes[0] = (byte)s.nextInt(bound.toByteArray()[0]);
-    else
-    	bytes[0] = 0;
-    
-    result = new BigInteger(bytes);
+    result = new BigInteger(bytes).mod(bound); // This probably leaks data
 
     return new Elem(result);
   }

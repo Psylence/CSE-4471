@@ -10,14 +10,14 @@ import java.security.SecureRandom;
  */
 public class IntegersModPrimePower extends IntegersModM {
 
-	private static final int PRIME_TEST = 500;
+	private static final int PRIME_TEST = 80;
 	
 	private BigInteger prime;
 	private int pow;
 	
 	/**
 	 * Creates a random prime and power and returns the prime power group that represents them
-	 * @return generateRandom(64, 16);
+	 * @return <code>generateRandom(64, 16)</code>;
 	 */
 	public static IntegersModPrimePower generateRandom() {
 		return generateRandom(64, 16);
