@@ -109,7 +109,8 @@ public class EnterEmailActivity extends Activity {
     } else {
       alert.setTitle(getResources().getString(R.string.email_add_dialog_title));
     }
-    alert.setMessage(getResources().getString(R.string.email_add_dialog_hint));
+    alert.setMessage(getResources()
+        .getString(R.string.email_add_dialog_message));
 
     final EditText input = new EditText(this);
     input.setHint(getResources().getString(R.string.email_add_dialog_hint));

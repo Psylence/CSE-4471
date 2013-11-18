@@ -45,7 +45,9 @@ public class Tallier extends User implements JSONSerializable {
     JSONObject obj = new JSONObject();
 
     obj.put(Tallier.JSON_EMAIL, getEmail());
-    obj.put(Tallier.JSON_PUBKEY, pubKey.toString());
+    if (pubKey != null) {
+      obj.put(Tallier.JSON_PUBKEY, pubKey.toString());
+    }
 
     return obj;
   }
