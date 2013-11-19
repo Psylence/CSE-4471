@@ -1,7 +1,5 @@
 package edu.osu.AU13.cse4471.securevote;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -10,10 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
-import edu.osu.AU13.cse4471.securevote.math.CyclicGroup;
 import edu.osu.AU13.cse4471.securevote.math.Group;
 import edu.osu.AU13.cse4471.securevote.math.GroupElement;
-import edu.osu.AU13.cse4471.securevote.math.IntegersModM;
 import edu.osu.AU13.cse4471.securevote.math.IntegersModPrimePower;
 
 /**
@@ -84,23 +80,16 @@ public class Poll implements JSONSerializable {
 	 * @param talliers
 	 *            List of talliers
 	 */
-	public Poll(UUID id, String title, String desc, List<Voter> voters,
-			List<Tallier> talliers) {
-		if (id == null || title == null || desc == null || voters == null
-				|| talliers == null) {
+	public Poll(UUID id, String title, String desc) {
+		if (id == null || title == null || desc == null) {
 			throw new NullPointerException();
-		}
-
-		if (voters.isEmpty() || talliers.isEmpty()) {
-			throw new IllegalArgumentException(
-					"Cannot create a poll with no voters or with no talliers");
 		}
 
 		this.id = id;
 		this.title = title;
 		this.desc = desc;
-		this.voters = Collections.unmodifiableList(voters);
-		this.talliers = Collections.unmodifiableList(talliers);
+		this.voters = null;
+		this.talliers = null;
 
 		int outerSanity = 0;
 		int sanity;
@@ -114,10 +103,13 @@ public class Poll implements JSONSerializable {
 			do {
 				this.G = gp.getRandomGenerator();
 				sanity++;
-			} while (g.equals(G) && sanity < SANITY_BOUND);
+			} while (g.equals(G) && sanity < Poll.SANITY_BOUND);
 			outerSanity++;
-		} while (sanity == SANITY_BOUND && outerSanity < SANITY_BOUND);
-		if(outerSanity == SANITY_BOUND) throw new RuntimeException("You're insane: failed to create a group with two random generators.");
+		} while (sanity == Poll.SANITY_BOUND && outerSanity < Poll.SANITY_BOUND);
+		if (outerSanity == Poll.SANITY_BOUND) {
+			throw new RuntimeException(
+					"You're insane: failed to create a group with two random generators.");
+		}
 	}
 
 	/**
@@ -218,6 +210,36 @@ public class Poll implements JSONSerializable {
 
 	public List<Tallier> getTalliers() {
 		return talliers;
+	}
+
+	/**
+	 * Saves a new list of voters for this poll. This will fail if the poll
+	 * already has voters assigned to it. It is intended only for use with the
+	 * constructor that does not specify voters (see {@link Poll(UUID, String,
+	 * String, Group, GroupElement, GroupElement)})
+	 * 
+	 * @param voters
+	 */
+	public void setVoters(List<Voter> voters) {
+		if (this.voters != null) {
+			throw new IllegalStateException("Poll already has voters set");
+		}
+		this.voters = Collections.unmodifiableList(voters);
+	}
+
+	/**
+	 * Saves a new list of talliers for this poll. This will fail if the poll
+	 * already has talliers assigned to it. It is intended only for use with the
+	 * constructor that does not specify talliers (see {@link Poll(UUID, String,
+	 * String, Group, GroupElement, GroupElement)})
+	 * 
+	 * @param voters
+	 */
+	public void setTalliers(List<Tallier> talliers) {
+		if (this.talliers != null) {
+			throw new IllegalStateException("Poll already has talliers set");
+		}
+		this.talliers = Collections.unmodifiableList(talliers);
 	}
 
 	@Override
