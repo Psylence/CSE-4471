@@ -25,7 +25,8 @@ public final class R {
     }
     public static final class id {
         public static final int TableLayout1=0x7f080000;
-        public static final int action_settings=0x7f08001f;
+        public static final int action_settings=0x7f080020;
+        public static final int button1=0x7f08001d;
         public static final int create_poll=0x7f08001b;
         public static final int create_poll_cancel=0x7f080013;
         public static final int create_poll_desc=0x7f080007;
@@ -52,8 +53,8 @@ public final class R {
         public static final int tableRow4=0x7f08000d;
         public static final int talliers_label=0x7f08000e;
         public static final int title_label=0x7f080003;
-        public static final int view_poll_desc=0x7f08001d;
-        public static final int view_poll_opts=0x7f08001e;
+        public static final int view_poll_desc=0x7f08001e;
+        public static final int view_poll_opts=0x7f08001f;
         public static final int view_poll_title=0x7f08001c;
         public static final int voters_label=0x7f080009;
     }

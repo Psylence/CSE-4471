@@ -17,7 +17,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.widget.Toast;
 
-public class Emailer extends Activity {
+public class Emailer {
 	
 	//private final String HOST = "smtp.gmail.com";
 	
@@ -44,7 +44,7 @@ public class Emailer extends Activity {
         session = Session.getDefaultInstance(props, this);*/
 	}
 	
-	public void sendEmail(Email email, String recipients) {
+	public void sendEmail(Email email, String recipients, Activity caller) {
 		/*try {
 			MimeMessage message = new MimeMessage(session);
 			
@@ -65,9 +65,9 @@ public class Emailer extends Activity {
 		i.putExtra(Intent.EXTRA_SUBJECT, email.getSubject());
 		i.putExtra(Intent.EXTRA_TEXT   , email.getBody());
 		try {
-		    startActivity(Intent.createChooser(i, "Send mail..."));
+		    caller.startActivity(Intent.createChooser(i, "Send mail..."));
 		} catch (ActivityNotFoundException ex) {
-		    Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+		    Toast.makeText(caller, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
 		}
 	}
 }

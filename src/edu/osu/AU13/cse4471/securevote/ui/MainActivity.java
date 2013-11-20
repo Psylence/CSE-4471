@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import edu.osu.AU13.cse4471.securevote.Email;
+import edu.osu.AU13.cse4471.securevote.Emailer;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
@@ -24,6 +26,8 @@ public class MainActivity extends Activity {
 	private ListView mPollList;
 	private ArrayAdapter<Poll> mPollAdapter;
 	private Button mCreatePoll;
+	
+	private Button testButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,8 @@ public class MainActivity extends Activity {
 
 		mPollList = (ListView) findViewById(R.id.poll_list);
 		mCreatePoll = (Button) findViewById(R.id.create_poll);
+		
+		testButton = (Button) findViewById(R.id.button1);
 
 		mPollList.setAdapter(mPollAdapter);
 		mPollList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -58,6 +64,17 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, CreatePoll.class);
 				startActivity(intent);
+			}
+		});
+		
+		testButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Email email = new Email("Test", "Body");
+				Emailer e = new Emailer();
+				
+				e.sendEmail(email, "me@farse.com", MainActivity.this);
 			}
 		});
 
