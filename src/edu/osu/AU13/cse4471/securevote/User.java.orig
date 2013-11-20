@@ -1,16 +1,5 @@
 package edu.osu.AU13.cse4471.securevote;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Common base class for users and talliers.
@@ -70,9 +59,13 @@ public abstract class User {
   /**
    * Send an email to this user
    * 
-   * @param payload
-   *          Data to attach t
+   * @param args
+   *          Don't know yet
    */
+<<<<<<< HEAD
+  public void sendEmail(Void... args) {
+    return;
+=======
   public void sendEmail(final String subject, final String body,
       final String attachmentContents, final Activity fromActivity) {
     new Thread(new Runnable() {
@@ -115,6 +108,7 @@ public abstract class User {
       Log.e(User.class.getSimpleName(), "Error creating file", e);
       return null;
     }
+>>>>>>> f59b7c9... Created ProtocolHandler and send key requests
   }
 
   @Override
