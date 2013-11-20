@@ -74,8 +74,7 @@ public abstract class User {
    *          Data to attach t
    */
   public void sendEmail(final String subject, final String body,
-      final String attachmentContents, final Activity fromActivity,
-      final int requestCode) {
+      final String attachmentContents, final Activity fromActivity) {
     new Thread(new Runnable() {
       @Override
       public void run() {
@@ -90,7 +89,7 @@ public abstract class User {
         if (attachmentUri != null) {
           intent.putExtra(Intent.EXTRA_STREAM, attachmentUri);
 
-          fromActivity.startActivityForResult(intent, requestCode);
+          fromActivity.startActivity(intent);
         } else {
           Toast.makeText(fromActivity, "Error occurred", Toast.LENGTH_SHORT)
               .show();

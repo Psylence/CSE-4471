@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
     JSONObject json = null;
     try {
       json = new JSONObject(fileContents);
-      (new ProtocolHandler()).handle(json);
+      ProtocolHandler.getInst().handle(json, this);
     } catch (JSONException e) {
       Log.e(MainActivity.class.getSimpleName(), "Invalid attachment contents",
           e);
