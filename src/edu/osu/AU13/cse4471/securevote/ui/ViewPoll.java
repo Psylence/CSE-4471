@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import edu.osu.AU13.cse4471.securevote.Constants;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
@@ -30,7 +31,7 @@ public class ViewPoll extends Activity {
     UUID id = null;
     Poll poll = null;
     try {
-      id = UUID.fromString(intent.getStringExtra(MainActivity.DATA_NAME_POLL));
+      id = UUID.fromString(intent.getStringExtra(Constants.DATA_NAME_POLL));
     } catch (NullPointerException e) {
     }
 

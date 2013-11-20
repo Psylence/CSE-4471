@@ -1,5 +1,16 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Common base class for users and talliers.
@@ -59,11 +70,52 @@ public abstract class User {
   /**
    * Send an email to this user
    * 
-   * @param args
-   *          Don't know yet
+   * @param payload
+   *          Data to attach t
    */
-  public void sendEmail(Void... args) {
-    return;
+  public void sendEmail(final String subject, final String body,
+      final String attachmentContents, final Activity fromActivity,
+      final int requestCode) {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_EMAIL, email);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+
+        Uri attachmentUri = User.createFile(attachmentContents, fromActivity);
+
+        if (attachmentUri != null) {
+          intent.putExtra(Intent.EXTRA_STREAM, attachmentUri);
+
+          fromActivity.startActivityForResult(intent, requestCode);
+        } else {
+          Toast.makeText(fromActivity, "Error occurred", Toast.LENGTH_SHORT)
+              .show();
+        }
+
+      }
+    }).start();
+  }
+
+  static Uri createFile(String contents, Context context) {
+    File publicStorage = context.getExternalFilesDir(null);
+    if (publicStorage == null) {
+      Log.e(User.class.getSimpleName(), "Could not access public storage");
+      return null;
+    }
+    try {
+      File temp = File.createTempFile("poll", ".tmp", publicStorage);
+      Writer w = new FileWriter(temp);
+      w.write(contents);
+      w.close();
+      return Uri.fromFile(temp);
+    } catch (IOException e) {
+      Log.e(User.class.getSimpleName(), "Error creating file", e);
+      return null;
+    }
   }
 
   @Override

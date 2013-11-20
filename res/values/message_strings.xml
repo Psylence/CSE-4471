@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="message_pubkeyreq_title">Join SecureVote poll as a vote tallier</string>
+    <string name="message_pubkeyreq_body_fmt">You have been invited to be a vote tallier for the following poll:\n\tTitle: %1$s\n\tDesc.: %2$s\n\nPlease open the attached file in the SecureVote app to continue.\n</string>
+    
+</resources>

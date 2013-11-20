@@ -15,12 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import edu.osu.AU13.cse4471.securevote.Constants;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
 
 public class MainActivity extends Activity {
-	public static final String DATA_NAME_POLL = "edu.osu.AU13.cse4471.securevote.POLL";
 	private ListView mPollList;
 	private ArrayAdapter<Poll> mPollAdapter;
 	private Button mCreatePoll;
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 
 				Poll poll = (Poll) item;
 				Intent intent = new Intent(MainActivity.this, ViewPoll.class);
-				intent.putExtra(MainActivity.DATA_NAME_POLL, poll.getId());
+				intent.putExtra(Constants.DATA_NAME_POLL, poll.getId());
 				startActivity(intent);
 			}
 		});

@@ -2,7 +2,11 @@ package edu.osu.AU13.cse4471.securevote.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -12,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,16 +28,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.osu.AU13.cse4471.securevote.Constants;
 import edu.osu.AU13.cse4471.securevote.EnterEmailActivity;
 import edu.osu.AU13.cse4471.securevote.Poll;
-import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
 import edu.osu.AU13.cse4471.securevote.Tallier;
 import edu.osu.AU13.cse4471.securevote.Voter;
 
 public class CreatePoll extends FragmentActivity {
-	private static final int VOTER_EMAIL_REQUEST = 17;
-	private static final int TALLIER_EMAIL_REQUEST = 289;
+	private static final int EDIT_VOTER_EMAIL_REQUEST = 17;
+	private static final int EDIT_TALLIER_EMAIL_REQUEST = 289;
+	private static final int SEND_EMAIL_REQUEST = 4913;
 	private EditText mTitle, mDesc;
 	private ArrayAdapter<String> mVoterAdapter, mTallierAdapter;
 	private ListView mVoterList, mTallierList;
@@ -107,11 +113,7 @@ public class CreatePoll extends FragmentActivity {
 					Toast.makeText(CreatePoll.this, mErrorCode,
 							Toast.LENGTH_SHORT).show();
 				} else {
-					PollDB.getInstance().putPoll(p);
-					Intent result = new Intent();
-					result.putExtra(MainActivity.DATA_NAME_POLL, p.getId());
-					setResult(Activity.RESULT_OK, result);
-					finish();
+					sharePoll(p);
 				}
 			}
 		});
@@ -156,12 +158,12 @@ public class CreatePoll extends FragmentActivity {
 
 	private void addVoter() {
 		Intent i = new Intent(this, EnterEmailActivity.class);
-		startActivityForResult(i, CreatePoll.VOTER_EMAIL_REQUEST);
+		startActivityForResult(i, CreatePoll.EDIT_VOTER_EMAIL_REQUEST);
 	}
 
 	private void addTallier() {
 		Intent i = new Intent(this, EnterEmailActivity.class);
-		startActivityForResult(i, CreatePoll.TALLIER_EMAIL_REQUEST);
+		startActivityForResult(i, CreatePoll.EDIT_TALLIER_EMAIL_REQUEST);
 	}
 
 	private Poll gatherInputs() {
@@ -210,22 +212,54 @@ public class CreatePoll extends FragmentActivity {
 		return p;
 	}
 
+	private void sharePoll(Poll p) {
+		// Create the email payload
+		String payload;
+		try {
+			JSONObject obj = new JSONObject();
+			obj.put(Constants.JSON_PHASE, Constants.PHASE_REQPUBKEY);
+			obj.put(Constants.JSON_TALLIERNUM, 0);
+			obj.put(Constants.JSON_POLL, p.toJson());
+			payload = obj.toString();
+		} catch (JSONException e) {
+			Log.e(CreatePoll.class.getSimpleName(), "Error serializing Poll: ",
+					e);
+			Toast.makeText(this, "Error serializing poll for email",
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		// Format and send the email
+		String title = getString(R.string.message_pubkeyreq_title);
+		String body = String.format(Locale.US,
+				getString(R.string.message_pubkeyreq_body_fmt), p.getTitle(),
+				p.getDesc());
+
+		p.getTalliers()
+				.get(0)
+				.sendEmail(title, body, payload, this,
+						CreatePoll.SEND_EMAIL_REQUEST);
+	}
+
 	@Override
 	protected void onActivityResult(int reqCode, int resCode, Intent intent) {
 		if (resCode == Activity.RESULT_OK) {
 			String[] res = intent.getExtras().getStringArray(
 					EnterEmailActivity.EMAIL_LIST);
 			if (res != null) {
-				if (reqCode == CreatePoll.VOTER_EMAIL_REQUEST) {
+				if (reqCode == CreatePoll.EDIT_VOTER_EMAIL_REQUEST) {
 					mVoterAdapter.clear();
 					for (String s : res) {
 						mVoterAdapter.add(s);
 					}
-				} else if (reqCode == CreatePoll.TALLIER_EMAIL_REQUEST) {
+				} else if (reqCode == CreatePoll.EDIT_TALLIER_EMAIL_REQUEST) {
 					mTallierAdapter.clear();
 					for (String s : res) {
 						mTallierAdapter.add(s);
 					}
+				} else if (reqCode == CreatePoll.SEND_EMAIL_REQUEST) {
+					setResult(Activity.RESULT_OK);
+					finish();
 				}
 			}
 		}
