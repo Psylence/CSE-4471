@@ -107,7 +107,7 @@ public abstract class User {
       return null;
     }
     try {
-      File temp = File.createTempFile("poll", ".tmp", publicStorage);
+      File temp = File.createTempFile("poll", ".svp", publicStorage);
       Writer w = new FileWriter(temp);
       w.write(contents);
       w.close();
