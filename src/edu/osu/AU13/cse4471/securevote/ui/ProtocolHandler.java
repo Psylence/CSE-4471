@@ -1,7 +1,5 @@
 package edu.osu.AU13.cse4471.securevote.ui;
 
-import java.util.Locale;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,7 +9,6 @@ import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.Constants;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.PrivateKey;
-import edu.osu.AU13.cse4471.securevote.R;
 import edu.osu.AU13.cse4471.securevote.Tallier;
 import edu.osu.AU13.cse4471.securevote.User;
 
@@ -35,7 +32,7 @@ public class ProtocolHandler {
       }
 
       PrivateKey key = new PrivateKey(p.getGroup(), p.getg());
-      p.setTallierSecretKey(key);
+      // p.setTallierSecretKey(key);
       p.getTalliers().get(whichTallier).setPublicKey(key.getPublicKey());
 
       if (whichTallier < p.getTalliers().size()) {
@@ -66,12 +63,12 @@ public class ProtocolHandler {
     }
 
     // Format and send the email
-    String title = activity.getString(R.string.message_pubkeyreq_title);
-    String body = String.format(Locale.US,
-        activity.getString(R.string.message_pubkeyreq_body_fmt), p.getTitle(),
-        p.getDesc());
+    // String title = activity.getString(R.string.message_pubkeyreq_title);
+    // String body = String.format(Locale.US,
+    // activity.getString(R.string.message_pubkeyreq_body_fmt), p.getTitle(),
+    // p.getDesc());
 
-    t.sendEmail(title, body, payload, activity);
+    // t.sendEmail(title, body, payload, activity);
   }
 
   private static boolean confirmIdentity(User user) {
