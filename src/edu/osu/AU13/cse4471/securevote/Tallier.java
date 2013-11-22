@@ -68,7 +68,7 @@ public class Tallier extends User implements JSONSerializable {
 
 	public void receiveVote(Activity caller, EncryptedPoint vote, String email) {
 		// Ensure the point is meant for you
-		if (vote.getX() != tallierNum) {
+		if (vote.getX() != tallierNum + 1) {
 			Context context = caller.getApplicationContext();
 			CharSequence text = "Vote isn't encrypted for this tallier.";
 			int duration = Toast.LENGTH_SHORT;

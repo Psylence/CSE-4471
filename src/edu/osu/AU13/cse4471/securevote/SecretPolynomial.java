@@ -23,8 +23,11 @@ public class SecretPolynomial {
 		// Create some random integer coefficents from which to construct the points
 		SecureRandom rng = new SecureRandom();
 		int[] coefficents = new int[order];
+		
+		// This bound on coeffiecent size should guarantee that there is no overflow when used in the voting algorithm
+		int bound = (int) (Integer.MAX_VALUE / (Math.pow(order + 1, order + 1)) - 1);
 		for(int i = 0; i < order; i++) {
-			coefficents[i] = rng.nextInt();
+			coefficents[i] = rng.nextInt(bound) + 1;
 		}
 		
 		// Calculate the points
