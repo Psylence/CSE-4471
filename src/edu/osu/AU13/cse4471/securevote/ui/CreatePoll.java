@@ -190,24 +190,21 @@ public class CreatePoll extends FragmentActivity {
 			return null;
 		}
 
-		Poll p = new Poll(UUID.randomUUID(), title, desc);
-
-		List<Voter> voters = new ArrayList<Voter>(nVoters);
+		List<String> voters = new ArrayList<String>(nVoters);
 		for (int i = 0; i < nVoters; i++) {
-			voters.add(new Voter(mVoterAdapter.getItem(i), p));
+			voters.add(mVoterAdapter.getItem(i));
 		}
 
-		List<Tallier> talliers = new ArrayList<Tallier>(nTalliers);
+		List<String> talliers = new ArrayList<String>(nTalliers);
 		ArrayAdapter<String> adapter = mTallierAdapter;
 		if (mTallierSame.isChecked()) {
 			adapter = mVoterAdapter;
 		}
 		for (int i = 0; i < nTalliers; i++) {
-			talliers.add(new Tallier(adapter.getItem(i), p));
+			talliers.add(adapter.getItem(i));
 		}
 
-		p.setVoters(voters);
-		p.setTalliers(talliers);
+		Poll p = new Poll(UUID.randomUUID(), title, desc, voters, talliers);
 
 		return p;
 	}

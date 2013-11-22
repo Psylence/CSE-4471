@@ -44,7 +44,7 @@ public class Emailer {
         session = Session.getDefaultInstance(props, this);*/
 	}
 	
-	public void sendEmail(Email email, String recipients, Activity caller) {
+	public static void sendEmail(Email email, String[] recipients, Activity caller) {
 		/*try {
 			MimeMessage message = new MimeMessage(session);
 			
@@ -61,7 +61,7 @@ public class Emailer {
 		
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("message/rfc822");
-		i.putExtra(Intent.EXTRA_EMAIL  , recipients.split(","));
+		i.putExtra(Intent.EXTRA_EMAIL  , recipients);
 		i.putExtra(Intent.EXTRA_SUBJECT, email.getSubject());
 		i.putExtra(Intent.EXTRA_TEXT   , email.getBody());
 		try {

@@ -2,11 +2,15 @@ package edu.osu.AU13.cse4471.securevote;
 
 import java.math.BigInteger;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
 import edu.osu.AU13.cse4471.securevote.math.Group;
 import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 import edu.osu.AU13.cse4471.securevote.math.MathUtils;
 
-public class PrivateKey {
+public class PrivateKey implements JSONSerializable {
 	private BigInteger privateKey;
 	private PublicKey publicKey = null;
 	private Group group;
@@ -27,5 +31,16 @@ public class PrivateKey {
 
 	public GroupElement decode(GroupElement cypher) {
 		return cypher.exp(privateKey.modInverse(group.order()));
+	}
+
+	public static PrivateKey fromString(Group group, String privKeyStr) {
+	    // TODO
+		return null;
+	}
+
+	@Override
+	public JSONObject toJson() throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

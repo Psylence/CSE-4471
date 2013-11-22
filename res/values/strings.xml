@@ -9,5 +9,7 @@
     <string name="title_activity_enter_email">Enter Emails</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="message_pubkeyreq_title">Securevote: A public key is required</string>
+    <string name="message_pubkeyreq_body_fmt">TODO ADD THIS</string>
 
 </resources>

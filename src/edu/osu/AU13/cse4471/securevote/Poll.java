@@ -47,13 +47,13 @@ public class Poll implements JSONSerializable {
 	 * List of voters in this poll. These are the users who can actually cast
 	 * votes.
 	 */
-	private List<Voter> voters;
+	private List<String> voters;
 
 	/**
 	 * List of talliers in this poll. These are the users to whom results are
 	 * sent to be decoded.
 	 */
-	private List<Tallier> talliers;
+	private List<String> talliers;
 
 	/**
 	 * Group used for encryption in this poll
@@ -80,7 +80,8 @@ public class Poll implements JSONSerializable {
 	 * @param talliers
 	 *            List of talliers
 	 */
-	public Poll(UUID id, String title, String desc) {
+	public Poll(UUID id, String title, String desc, 
+			List<String> voters, List<String> talliers) {
 		if (id == null || title == null || desc == null) {
 			throw new NullPointerException();
 		}
@@ -88,8 +89,8 @@ public class Poll implements JSONSerializable {
 		this.id = id;
 		this.title = title;
 		this.desc = desc;
-		this.voters = null;
-		this.talliers = null;
+		this.voters = voters;
+		this.talliers = talliers;
 
 		int outerSanity = 0;
 		int sanity;
@@ -131,11 +132,8 @@ public class Poll implements JSONSerializable {
 			g = group.elementFromString(obj.getString(Poll.JSON_LITTLE_G));
 			G = group.elementFromString(obj.getString(Poll.JSON_BIG_G));
 
-			voters = JSONUtils.fromArray(obj.getJSONArray(Poll.JSON_VOTERS),
-					new Voter.VoterDeserializer(this));
-			talliers = JSONUtils.fromArray(
-					obj.getJSONArray(Poll.JSON_TALLIERS),
-					new Tallier.TallierDeserializer(this));
+			voters = JSONUtils.fromArray(obj.getJSONArray(Poll.JSON_VOTERS));
+			talliers = JSONUtils.fromArray(obj.getJSONArray(Poll.JSON_TALLIERS));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(
 					"JSON object does not encode a Poll", e);
@@ -204,11 +202,11 @@ public class Poll implements JSONSerializable {
 	 * 
 	 * @return list of voters
 	 */
-	public List<Voter> getVoters() {
+	public List<String> getVoters() {
 		return voters;
 	}
 
-	public List<Tallier> getTalliers() {
+	public List<String> getTalliers() {
 		return talliers;
 	}
 
@@ -220,7 +218,7 @@ public class Poll implements JSONSerializable {
 	 * 
 	 * @param voters
 	 */
-	public void setVoters(List<Voter> voters) {
+	public void setVoters(List<String> voters) {
 		if (this.voters != null) {
 			throw new IllegalStateException("Poll already has voters set");
 		}
@@ -235,7 +233,7 @@ public class Poll implements JSONSerializable {
 	 * 
 	 * @param voters
 	 */
-	public void setTalliers(List<Tallier> talliers) {
+	public void setTalliers(List<String> talliers) {
 		if (this.talliers != null) {
 			throw new IllegalStateException("Poll already has talliers set");
 		}

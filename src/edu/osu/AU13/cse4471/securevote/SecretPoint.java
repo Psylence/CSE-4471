@@ -3,6 +3,7 @@ package edu.osu.AU13.cse4471.securevote;
 import java.util.List;
 import java.util.Random;
 
+// TODO change this to use BigIntegers for robustness sake
 /**
  * A class for representing components of part of a secret.
  * 
