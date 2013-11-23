@@ -1,6 +1,5 @@
 package edu.osu.AU13.cse4471.securevote;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -207,18 +206,19 @@ public class Tallier extends User implements JSONSerializable {
 
 			// Get the current list of votes
 			Map<String, EncryptedPoint> map = new TreeMap<String, EncryptedPoint>();
-			JSONObject votes = obj.getJSONObject(JSON_VOTES);
-			Iterator i = votes.keys();
+			JSONObject votes = obj.getJSONObject(Tallier.JSON_VOTES);
+			Iterator<?> i = votes.keys();
 			EncryptedPoint.Deserializer epd = new EncryptedPoint.Deserializer(
 					mPoll.getGroup());
 			while (i.hasNext()) {
 				String name = (String) i.next();
 				map.put(name, epd.fromJson(votes.getJSONObject(name)));
 			}
-			
+
 			// Get the set of results
-			JSONArray arr = obj.getJSONArray(JSON_RESULTS);
-			HashSet<SecretPoint> results = new HashSet<SecretPoint>(JSONUtils.fromArray(arr, new SecretPoint.Deserializer()));
+			JSONArray arr = obj.getJSONArray(Tallier.JSON_RESULTS);
+			HashSet<SecretPoint> results = new HashSet<SecretPoint>(
+					JSONUtils.fromArray(arr, new SecretPoint.Deserializer()));
 
 			return new Tallier(email, mPoll, privKey, map, results);
 		}

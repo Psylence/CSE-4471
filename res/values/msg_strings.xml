@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="msg_newpoll_subject">[SecureVote] New poll</string>
+    <string name="msg_newpoll_body">You have been invited to participate in a new SecureVote poll:\n\tTitle:\t%1$s\n\tDescription:\t%2$s\n\nOpen the attachment in the SecureVote app to proceed.</string>
     <string name="msg_pubkey_subject">[SecureVote] Public key</string>
     <string name="msg_pubkey_body">Tallier %1$s has sent you a public key for poll %2$s.  Open the attachment in the SecureVote app to load this public key.</string>
 </resources>
