@@ -1,6 +1,5 @@
 package edu.osu.AU13.cse4471.securevote.ui;
 
-import java.util.Collections;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
@@ -14,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import edu.osu.AU13.cse4471.securevote.DiskPersister;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.R;
 import edu.osu.AU13.cse4471.securevote.Voter;
@@ -54,15 +54,13 @@ public class ViewPoll extends Activity {
 	}
 
 	private void updateFields() {
-		Poll poll = new Poll(mId, "title", "desc",
-				Collections.singletonList("krieger.63@osu.edu"),
-				Collections.singletonList("krieger.63@osu.edu"));
-		Voter voter = new Voter("foo@example.org", poll);
+		Poll poll = DiskPersister.getInst().loadPoll(mId, this);
+		Voter voter = DiskPersister.getInst().loadVoter(mId, this);
 
 		mTitle.setText(poll.getTitle());
 		mDesc.setText(poll.getDesc());
 
-		if (!voter.isReadyToVote()) {
+		if (voter == null || !voter.isReadyToVote()) {
 			mVote0.setVisibility(View.GONE);
 			mVote1.setVisibility(View.GONE);
 			mAlreadyVoted.setVisibility(View.GONE);
