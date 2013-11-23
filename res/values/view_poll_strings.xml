@@ -4,9 +4,9 @@
     <string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
     <string name="view_poll_send_pubkey_label">Send Public Key</string>
     <string name="view_poll_not_participant">You are not part of this poll.</string>
-    <string name="view_poll_need_keys">Can't vote yet, waiting for keys</string>
+    <string name="view_poll_need_keys">Can\'t vote yet, waiting for keys</string>
     <string name="view_poll_resend_vote">Resend vote</string>
-    <string name="view_poll_need_votes">Can't count votes yet, waiting for votes</string>
+    <string name="view_poll_need_votes">Can\'t count votes yet, waiting for votes</string>
     <string name="view_poll_send_point">Share results with Talliers</string>
     <string name="view_poll_count_votes">Count votes</string>
     

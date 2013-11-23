@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_pubkey_subject">[SecureVote] Public key</string>
+    <string name="msg_pubkey_body">Tallier %1$s has sent you a public key for poll %2$s.  Open the attachment in the SecureVote app to load this public key.</string>
+</resources>
