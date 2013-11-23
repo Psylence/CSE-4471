@@ -4,4 +4,9 @@
     <string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
     <string name="view_poll_already_voted">Already voted!</string>
     <string name="view_poll_need_keys">Poll is not ready yet (need keys)</string>
+    <string name="view_poll_tallier">Tallier</string>
+    <string name="view_poll_voter">Voter</string>
+    <string name="view_poll_votes">Votes Collected:</string>
+    <string name="view_poll_key_reason">Send out a key so that voters can send you votes.</string>
+    <string name="view_poll_send_key">Send Key</string>
 </resources>

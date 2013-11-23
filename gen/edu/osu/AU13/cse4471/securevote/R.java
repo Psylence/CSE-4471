@@ -25,7 +25,8 @@ public final class R {
     }
     public static final class id {
         public static final int TableLayout1=0x7f080000;
-        public static final int action_settings=0x7f080022;
+        public static final int action_settings=0x7f080025;
+        public static final int button1=0x7f080024;
         public static final int create_poll=0x7f08001b;
         public static final int create_poll_cancel=0x7f080013;
         public static final int create_poll_desc=0x7f080007;
@@ -51,6 +52,8 @@ public final class R {
         public static final int tableRow3=0x7f080008;
         public static final int tableRow4=0x7f08000d;
         public static final int talliers_label=0x7f08000e;
+        public static final int textView1=0x7f080022;
+        public static final int textView2=0x7f080023;
         public static final int title_label=0x7f080003;
         public static final int view_poll_already_voted=0x7f080020;
         public static final int view_poll_desc=0x7f08001d;
@@ -64,7 +67,8 @@ public final class R {
         public static final int activity_create_poll=0x7f030000;
         public static final int activity_enter_email=0x7f030001;
         public static final int activity_main=0x7f030002;
-        public static final int activity_view_poll=0x7f030003;
+        public static final int activity_tallier=0x7f030003;
+        public static final int activity_view_poll=0x7f030004;
     }
     public static final class menu {
         public static final int create_poll=0x7f070000;
@@ -108,14 +112,21 @@ public final class R {
         public static final int message_pubkeyreq_body_fmt=0x7f040024;
         public static final int message_pubkeyreq_title=0x7f040023;
         public static final int no=0x7f040026;
+        public static final int tallier_send_key=0x7f040028;
+        public static final int tallier_title=0x7f040027;
         public static final int title_activity_create_poll=0x7f04001e;
         public static final int title_activity_enter_email=0x7f040020;
         public static final int title_activity_main=0x7f04001d;
         public static final int title_activity_view_poll=0x7f04001f;
-        public static final int view_poll_already_voted=0x7f040029;
-        public static final int view_poll_desc_def=0x7f040028;
-        public static final int view_poll_need_keys=0x7f04002a;
-        public static final int view_poll_title_def=0x7f040027;
+        public static final int view_poll_already_voted=0x7f04002b;
+        public static final int view_poll_desc_def=0x7f04002a;
+        public static final int view_poll_key_reason=0x7f040030;
+        public static final int view_poll_need_keys=0x7f04002c;
+        public static final int view_poll_send_key=0x7f040031;
+        public static final int view_poll_tallier=0x7f04002d;
+        public static final int view_poll_title_def=0x7f040029;
+        public static final int view_poll_voter=0x7f04002e;
+        public static final int view_poll_votes=0x7f04002f;
         public static final int yes=0x7f040025;
     }
     public static final class style {
