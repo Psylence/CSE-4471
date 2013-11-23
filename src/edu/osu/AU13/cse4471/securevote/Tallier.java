@@ -1,10 +1,15 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +23,8 @@ import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 public class Tallier extends User implements JSONSerializable {
 	private static final String JSON_EMAIL = "email";
 	private static final String JSON_PRIVKEY = "privkey";
-	public static final String JSON_HASSENTPOLL = "hasSentKey";
+	private static final String JSON_VOTES = "votes";
+	private static final String JSON_RESULTS = "results";
 
 	private PrivateKey privKey;
 	// A map is used in the case of needing to ignore a vote because they failed
@@ -26,7 +32,6 @@ public class Tallier extends User implements JSONSerializable {
 	private Map<String, EncryptedPoint> votes;
 	private Set<SecretPoint> points;
 	private int tallierNum;
-	private boolean hasSentKey;
 
 	/**
 	 * Create a Tallier with the given email, belonging to the given Poll
@@ -35,7 +40,9 @@ public class Tallier extends User implements JSONSerializable {
 	 * @param poll
 	 */
 	public Tallier(String email, Poll poll) {
-		this(email, poll, new PrivateKey(poll.getGroup(), poll.getg()), false);
+		this(email, poll, new PrivateKey(poll.getGroup(), poll.getg()),
+				new TreeMap<String, EncryptedPoint>(),
+				new HashSet<SecretPoint>());
 	}
 
 	/**
@@ -48,13 +55,14 @@ public class Tallier extends User implements JSONSerializable {
 	 * @param hasSentKey
 	 */
 	public Tallier(String email, Poll poll, PrivateKey privKey,
-			boolean hasSentKey) {
+			Map<String, EncryptedPoint> votes, Set<SecretPoint> points) {
 		super(email, poll);
 		this.privKey = privKey;
 		this.votes = new TreeMap<String, EncryptedPoint>();
 		this.points = new TreeSet<SecretPoint>();
 		this.tallierNum = poll.getTalliers().indexOf(email);
-		this.hasSentKey = hasSentKey;
+		this.votes = votes;
+		this.points = points;
 	}
 
 	public void sendPublicKey(Activity caller) {
@@ -76,7 +84,8 @@ public class Tallier extends User implements JSONSerializable {
 			return;
 		}
 
-		Email email = new Email(title, caller.getResources().getString(R.string.email_body), attach);
+		Email email = new Email(title, caller.getResources().getString(
+				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
@@ -133,7 +142,8 @@ public class Tallier extends User implements JSONSerializable {
 			return;
 		}
 
-		Email email = new Email(title, caller.getResources().getString(R.string.email_body), attach);
+		Email email = new Email(title, caller.getResources().getString(
+				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
@@ -146,7 +156,19 @@ public class Tallier extends User implements JSONSerializable {
 
 		obj.put(Tallier.JSON_EMAIL, getEmail());
 		obj.put(Tallier.JSON_PRIVKEY, privKey.getPublicKey().toString());
-		obj.put(Tallier.JSON_HASSENTPOLL, hasSentKey);
+
+		JSONObject map = new JSONObject();
+		for (Entry<String, EncryptedPoint> entry : votes.entrySet()) {
+			map.put(entry.getKey(), entry.getValue());
+		}
+
+		obj.put(Tallier.JSON_VOTES, map);
+
+		JSONArray arr = new JSONArray();
+		for (SecretPoint p : points) {
+			arr.put(p.toJson());
+		}
+		obj.put(Tallier.JSON_RESULTS, arr);
 
 		return obj;
 	}
@@ -182,9 +204,23 @@ public class Tallier extends User implements JSONSerializable {
 			PrivateKey privKey;
 			privKey = new PrivateKey.Deserializer().fromJson(obj
 					.getJSONObject(Tallier.JSON_PRIVKEY));
-			boolean hasSentKey = obj.getBoolean(Tallier.JSON_HASSENTPOLL);
 
-			return new Tallier(email, mPoll, privKey, hasSentKey);
+			// Get the current list of votes
+			Map<String, EncryptedPoint> map = new TreeMap<String, EncryptedPoint>();
+			JSONObject votes = obj.getJSONObject(JSON_VOTES);
+			Iterator i = votes.keys();
+			EncryptedPoint.Deserializer epd = new EncryptedPoint.Deserializer(
+					mPoll.getGroup());
+			while (i.hasNext()) {
+				String name = (String) i.next();
+				map.put(name, epd.fromJson(votes.getJSONObject(name)));
+			}
+			
+			// Get the set of results
+			JSONArray arr = obj.getJSONArray(JSON_RESULTS);
+			HashSet<SecretPoint> results = new HashSet<SecretPoint>(JSONUtils.fromArray(arr, new SecretPoint.Deserializer()));
+
+			return new Tallier(email, mPoll, privKey, map, results);
 		}
 	}
 
