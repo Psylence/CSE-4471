@@ -21,19 +21,47 @@
         android:id="@+id/view_poll_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/view_poll_opts"
-        android:layout_alignRight="@+id/view_poll_opts"
         android:layout_below="@id/view_poll_title"
+        android:layout_centerHorizontal="true"
         android:text="@string/view_poll_desc_def"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <ListView
-        android:id="@+id/view_poll_opts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/view_poll_desc"
-        android:layout_centerHorizontal="true" >
 
-    </ListView>
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp" >
+
+        <Button
+            android:id="@+id/view_poll_vote_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no" />
+
+        <Button
+            android:id="@+id/view_poll_vote_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/yes" />
+
+        <TextView
+            android:id="@+id/view_poll_already_voted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:text="@string/view_poll_already_voted"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/view_poll_need_keys"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_poll_need_keys"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -25,7 +25,7 @@ public final class R {
     }
     public static final class id {
         public static final int TableLayout1=0x7f080000;
-        public static final int action_settings=0x7f08001f;
+        public static final int action_settings=0x7f080022;
         public static final int create_poll=0x7f08001b;
         public static final int create_poll_cancel=0x7f080013;
         public static final int create_poll_desc=0x7f080007;
@@ -52,9 +52,12 @@ public final class R {
         public static final int tableRow4=0x7f08000d;
         public static final int talliers_label=0x7f08000e;
         public static final int title_label=0x7f080003;
+        public static final int view_poll_already_voted=0x7f080020;
         public static final int view_poll_desc=0x7f08001d;
-        public static final int view_poll_opts=0x7f08001e;
+        public static final int view_poll_need_keys=0x7f080021;
         public static final int view_poll_title=0x7f08001c;
+        public static final int view_poll_vote_0=0x7f08001e;
+        public static final int view_poll_vote_1=0x7f08001f;
         public static final int voters_label=0x7f080009;
     }
     public static final class layout {
@@ -104,12 +107,16 @@ public final class R {
         public static final int main_poll_list_label=0x7f04001a;
         public static final int message_pubkeyreq_body_fmt=0x7f040024;
         public static final int message_pubkeyreq_title=0x7f040023;
+        public static final int no=0x7f040026;
         public static final int title_activity_create_poll=0x7f04001e;
         public static final int title_activity_enter_email=0x7f040020;
         public static final int title_activity_main=0x7f04001d;
         public static final int title_activity_view_poll=0x7f04001f;
-        public static final int view_poll_desc_def=0x7f040026;
-        public static final int view_poll_title_def=0x7f040025;
+        public static final int view_poll_already_voted=0x7f040029;
+        public static final int view_poll_desc_def=0x7f040028;
+        public static final int view_poll_need_keys=0x7f04002a;
+        public static final int view_poll_title_def=0x7f040027;
+        public static final int yes=0x7f040025;
     }
     public static final class style {
         /** 

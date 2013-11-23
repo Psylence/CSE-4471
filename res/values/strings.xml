@@ -11,5 +11,6 @@
     <string name="delete">Delete</string>
     <string name="message_pubkeyreq_title">Securevote: A public key is required</string>
     <string name="message_pubkeyreq_body_fmt">TODO ADD THIS</string>
-
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

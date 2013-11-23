@@ -2,11 +2,7 @@ package edu.osu.AU13.cse4471.securevote.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -16,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,24 +23,21 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.osu.AU13.cse4471.securevote.Constants;
 import edu.osu.AU13.cse4471.securevote.EnterEmailActivity;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.R;
-import edu.osu.AU13.cse4471.securevote.Tallier;
-import edu.osu.AU13.cse4471.securevote.Voter;
 
 public class CreatePoll extends FragmentActivity {
-  private static final int EDIT_VOTER_EMAIL_REQUEST = 17;
-  private static final int EDIT_TALLIER_EMAIL_REQUEST = 289;
-  private EditText mTitle, mDesc;
-  private ArrayAdapter<String> mVoterAdapter, mTallierAdapter;
-  private ListView mVoterList, mTallierList;
-  private Button mVoterAdd, mTallierAdd;
-  private TextView mVoterEmpty, mTallierEmpty;
-  private CheckBox mTallierSame;
-  private Button mCancel, mOk;
-  private int mErrorCode;
+	private static final int EDIT_VOTER_EMAIL_REQUEST = 17;
+	private static final int EDIT_TALLIER_EMAIL_REQUEST = 289;
+	private EditText mTitle, mDesc;
+	private ArrayAdapter<String> mVoterAdapter, mTallierAdapter;
+	private ListView mVoterList, mTallierList;
+	private Button mVoterAdd, mTallierAdd;
+	private TextView mVoterEmpty, mTallierEmpty;
+	private CheckBox mTallierSame;
+	private Button mCancel, mOk;
+	private int mErrorCode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,19 +96,19 @@ public class CreatePoll extends FragmentActivity {
 			}
 		});
 
-    mOk.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Poll p = gatherInputs();
-        if (p == null) {
-          Toast.makeText(CreatePoll.this, mErrorCode, Toast.LENGTH_SHORT)
-              .show();
-        } else {
-          ProtocolHandler.getInst().sendRequestPublicKey(p,
-              p.getTalliers().get(0), CreatePoll.this);
-        }
-      }
-    });
+		mOk.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Poll p = gatherInputs();
+				if (p == null) {
+					Toast.makeText(CreatePoll.this, mErrorCode,
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(CreatePoll.this, "Send public key request",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 
 		DataSetObserver obs = new DataSetObserver() {
 			@Override
@@ -209,33 +201,33 @@ public class CreatePoll extends FragmentActivity {
 		return p;
 	}
 
-  @Override
-  protected void onActivityResult(int reqCode, int resCode, Intent intent) {
-    if (resCode == Activity.RESULT_OK) {
-      String[] res = intent.getExtras().getStringArray(
-          EnterEmailActivity.EMAIL_LIST);
-      if (res != null) {
-        if (reqCode == CreatePoll.EDIT_VOTER_EMAIL_REQUEST) {
-          mVoterAdapter.clear();
-          for (String s : res) {
-            mVoterAdapter.add(s);
-          }
-        } else if (reqCode == CreatePoll.EDIT_TALLIER_EMAIL_REQUEST) {
-          mTallierAdapter.clear();
-          for (String s : res) {
-            mTallierAdapter.add(s);
-          }
-        }
-      }
-    }
-  }
+	@Override
+	protected void onActivityResult(int reqCode, int resCode, Intent intent) {
+		if (resCode == Activity.RESULT_OK) {
+			String[] res = intent.getExtras().getStringArray(
+					EnterEmailActivity.EMAIL_LIST);
+			if (res != null) {
+				if (reqCode == CreatePoll.EDIT_VOTER_EMAIL_REQUEST) {
+					mVoterAdapter.clear();
+					for (String s : res) {
+						mVoterAdapter.add(s);
+					}
+				} else if (reqCode == CreatePoll.EDIT_TALLIER_EMAIL_REQUEST) {
+					mTallierAdapter.clear();
+					for (String s : res) {
+						mTallierAdapter.add(s);
+					}
+				}
+			}
+		}
+	}
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.create_poll, menu);
-    return true;
-  }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.create_poll, menu);
+		return true;
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

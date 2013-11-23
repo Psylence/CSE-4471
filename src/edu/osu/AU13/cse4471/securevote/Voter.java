@@ -1,6 +1,5 @@
 package edu.osu.AU13.cse4471.securevote;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import org.json.JSONException;
@@ -9,15 +8,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
-
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
-import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 
 public class Voter extends User implements JSONSerializable {
 	private static final String JSON_EMAIL = "email";
 
 	private PublicKey[] keys;
+	private boolean hasVoted;
 
 	/**
 	 * Create a Voter, assigned the given email address
@@ -61,8 +59,9 @@ public class Voter extends User implements JSONSerializable {
 
 	public boolean isReadyToVote() {
 		for (int i = 0; i < keys.length; i++) {
-			if (keys[i] == null)
+			if (keys[i] == null) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -87,11 +86,17 @@ public class Voter extends User implements JSONSerializable {
 		String body = "{";
 		for (int i = 0; i < talliers.size(); i++) {
 			EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
-			//body += do something here that builds up the body
+			// body += do something here that builds up the body
 		}
-		
+
 		Email email = new Email(subject, body);
-		Emailer.sendEmail(email, (String[])talliers.toArray(), caller);
+		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller);
+
+		hasVoted = true;
+	}
+
+	public boolean hasVoted() {
+		return hasVoted;
 	}
 
 	@Override

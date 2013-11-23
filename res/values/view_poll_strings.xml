@@ -2,4 +2,6 @@
 <resources>
     <string name="view_poll_title_def">&lt;FILLER TITLE&gt;</string>
     <string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
+    <string name="view_poll_already_voted">Already voted!</string>
+    <string name="view_poll_need_keys">Poll is not ready yet (need keys)</string>
 </resources>
