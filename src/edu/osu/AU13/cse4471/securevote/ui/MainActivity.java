@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
 		// });
 
 		Intent intent = getIntent();
-		if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
+		if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
 			Uri uri = intent.getData();
 			if (uri != null && uri.getScheme().equals("file")) {
 				File f = new File(uri.getPath());

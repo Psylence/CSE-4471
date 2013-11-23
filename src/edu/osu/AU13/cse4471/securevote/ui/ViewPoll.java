@@ -12,18 +12,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.osu.AU13.cse4471.securevote.DiskPersister;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.R;
+import edu.osu.AU13.cse4471.securevote.Tallier;
 import edu.osu.AU13.cse4471.securevote.Voter;
 
 public class ViewPoll extends Activity {
 	private TextView mTitle;
 	private TextView mDesc;
-	private Button mVote0;
-	private Button mVote1;
-	private TextView mInfo;
+	private LinearLayout mContents;
 	private UUID mId;
 
 	@Override
@@ -35,9 +35,7 @@ public class ViewPoll extends Activity {
 
 		mTitle = (TextView) findViewById(R.id.view_poll_title);
 		mDesc = (TextView) findViewById(R.id.view_poll_desc);
-		mVote0 = (Button) findViewById(R.id.view_poll_vote_0);
-		mVote1 = (Button) findViewById(R.id.view_poll_vote_1);
-		mInfo = (TextView) findViewById(R.id.view_poll_info);
+		mContents = (LinearLayout) findViewById(R.id.view_poll_contents);
 
 		Intent intent = getIntent();
 
@@ -52,35 +50,56 @@ public class ViewPoll extends Activity {
 	}
 
 	private void updateFields() {
-		Poll poll = DiskPersister.getInst().loadPoll(mId, this);
-		Voter voter = DiskPersister.getInst().loadVoter(mId, this);
+		Poll p = DiskPersister.getInst().loadPoll(mId, this);
+		Voter v = DiskPersister.getInst().loadVoter(mId, this);
+		Tallier t = DiskPersister.getInst().loadTallier(mId, this);
 
-		mTitle.setText(poll.getTitle());
-		mDesc.setText(poll.getDesc());
+		mTitle.setText(p.getTitle());
+		mDesc.setText(p.getDesc());
 
-		displayInfo(R.string.view_poll_need_keys);
+		mContents.removeAllViews();
+		if (t == null && v == null) {
+			displayInfo(R.string.view_poll_not_participant);
+		}
+
+		if (t != null) {
+			displayOneButton(R.string.view_poll_send_pubkey_label,
+					new DoNothing());
+		}
+
+		if (t != null && !t.hasAllVotes()) {
+			displayInfo(R.string.view_poll_need_votes);
+		} else if (t != null && t.hasAllVotes() && !t.hasResults()) {
+			displayOneButton(R.string.view_poll_send_point, new DoNothing());
+		} else if (t != null && t.hasResults()) {
+			displayOneButton(R.string.view_poll_count_votes, new DoNothing());
+		}
 	}
 
-	private void displayOneButton(int rId) {
-		mVote0.setVisibility(View.VISIBLE);
-		mVote1.setVisibility(View.GONE);
-		mInfo.setVisibility(View.GONE);
-		mVote1.setText(rId);
+	private void displayOneButton(int buttonText, View.OnClickListener listener) {
+		Button b = new Button(this);
+		b.setText(buttonText);
+		b.setOnClickListener(listener);
+
+		mContents.addView(b);
 	}
 
-	private void displayTwoButtons(int rId0, int rId1) {
-		mVote0.setVisibility(View.VISIBLE);
-		mVote1.setVisibility(View.VISIBLE);
-		mInfo.setVisibility(View.GONE);
-		mVote0.setText(rId0);
-		mVote1.setText(rId1);
+	private void displayTwoButtons(int button0Text, View.OnClickListener l0,
+			int button1Text, View.OnClickListener l1) {
+		LinearLayout horiz = new LinearLayout(this);
+		horiz.setOrientation(LinearLayout.HORIZONTAL);
+		Button b0 = new Button(this), b1 = new Button(this);
+		b0.setText(button0Text);
+		b0.setOnClickListener(l0);
+		b1.setText(button1Text);
+		b1.setOnClickListener(l1);
+		mContents.addView(horiz);
 	}
 
 	private void displayInfo(int rId) {
-		mVote0.setVisibility(View.GONE);
-		mVote1.setVisibility(View.GONE);
-		mInfo.setVisibility(View.VISIBLE);
-		mInfo.setText(rId);
+		TextView tv = new TextView(this);
+		tv.setText(rId);
+		mContents.addView(tv);
 
 	}
 
@@ -125,4 +144,9 @@ public class ViewPoll extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private static class DoNothing implements View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+		}
+	}
 }

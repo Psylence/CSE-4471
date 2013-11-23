@@ -128,7 +128,7 @@ public class Poll implements JSONSerializable {
 	 *            JSONObject as returned by {@link toJson()}.
 	 * @throws IllegalArgumentException
 	 */
-	public Poll(JSONObject obj) throws IllegalArgumentException {
+	public Poll(JSONObject obj) throws JSONException {
 		try {
 			id = UUID.fromString(obj.getString(Poll.JSON_ID));
 			title = obj.getString(Poll.JSON_TITLE);
@@ -143,9 +143,10 @@ public class Poll implements JSONSerializable {
 			voters = JSONUtils.fromArray(obj.getJSONArray(Poll.JSON_VOTERS));
 			talliers = JSONUtils
 					.fromArray(obj.getJSONArray(Poll.JSON_TALLIERS));
-		} catch (JSONException e) {
-			throw new IllegalArgumentException(
-					"JSON object does not encode a Poll", e);
+		} catch (IllegalArgumentException e) {
+			JSONException e2 = new JSONException("Invalid Poll");
+			e2.initCause(e);
+			throw e2;
 		}
 	}
 

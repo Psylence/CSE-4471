@@ -1,7 +1,9 @@
 package edu.osu.AU13.cse4471.securevote;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +24,7 @@ public class Tallier extends User implements JSONSerializable {
 	// A map is used in the case of needing to ignore a vote because they failed
 	// to send it to every Tallier
 	private Map<String, EncryptedPoint> votes;
+	private Set<SecretPoint> points;
 	private int tallierNum;
 	private boolean hasSentKey;
 
@@ -49,6 +52,7 @@ public class Tallier extends User implements JSONSerializable {
 		super(email, poll);
 		this.privKey = privKey;
 		this.votes = new TreeMap<String, EncryptedPoint>();
+		this.points = new TreeSet<SecretPoint>();
 		this.tallierNum = poll.getTalliers().indexOf(email);
 		this.hasSentKey = hasSentKey;
 	}
@@ -182,6 +186,14 @@ public class Tallier extends User implements JSONSerializable {
 
 			return new Tallier(email, mPoll, privKey, hasSentKey);
 		}
+	}
+
+	public boolean hasAllVotes() {
+		return votes.keySet().containsAll(getPoll().getVoters());
+	}
+
+	public boolean hasResults() {
+		return points.size() == getPoll().getVoters().size();
 	}
 
 }

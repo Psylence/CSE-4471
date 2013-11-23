@@ -167,6 +167,8 @@ public class DiskPersister {
 			return new Triple(p, v, t);
 		} catch (JSONException e) {
 			Log.e(DiskPersister.class.getSimpleName(), "Error parsing file", e);
+			File f = new File(con.getFilesDir(), id.toString());
+			f.delete();
 			return null;
 		}
 	}

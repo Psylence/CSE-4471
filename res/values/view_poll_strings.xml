@@ -2,11 +2,11 @@
 <resources>
     <string name="view_poll_title_def">&lt;FILLER TITLE&gt;</string>
     <string name="view_poll_desc_def">&lt;FILLER DESCRIPTION&gt;</string>
-    <string name="view_poll_already_voted">Already voted!</string>
+    <string name="view_poll_send_pubkey_label">Send Public Key</string>
+    <string name="view_poll_not_participant">You are not part of this poll.</string>
+    <string name="view_poll_need_votes">Waiting for votes</string>
+    <string name="view_poll_send_point">Share results with Talliers</string>
+    <string name="view_poll_count_votes">Count votes</string>
     <string name="view_poll_need_keys">Poll is not ready yet (need keys)</string>
-    <string name="view_poll_tallier">Tallier</string>
-    <string name="view_poll_voter">Voter</string>
-    <string name="view_poll_votes">Votes Collected:</string>
-    <string name="view_poll_key_reason">Send out a key so that voters can send you votes.</string>
-    <string name="view_poll_send_key">Send Key</string>
+    
 </resources>
