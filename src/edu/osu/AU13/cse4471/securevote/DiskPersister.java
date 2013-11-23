@@ -199,4 +199,8 @@ public class DiskPersister {
 			}
 		}
 	}
+
+	public void registerFileForDeletion(Poll p, File extFile) {
+
+	}
 }
