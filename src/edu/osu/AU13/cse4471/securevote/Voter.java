@@ -35,7 +35,7 @@ public class Voter extends User implements JSONSerializable {
 		}
 		choice = -1;
 	}
-	
+
 	public Voter(String email, Poll poll, PublicKey[] keys, int choice) {
 		super(email, poll);
 		this.keys = keys;
@@ -85,10 +85,10 @@ public class Voter extends User implements JSONSerializable {
 			return;
 		}
 
-		if(choice == -1) {
+		if (choice == -1) {
 			choice = selection ? 1 : 0;
 		}
-		
+
 		// Encode the choice
 		SecretPolynomial poly = new SecretPolynomial(getPoll().getTalliers()
 				.size(), choice);
@@ -98,7 +98,7 @@ public class Voter extends User implements JSONSerializable {
 
 		String subject = "Securevoting: Encrypted Vote";
 		JSONArray arr = new JSONArray();
-		
+
 		for (int i = 0; i < talliers.size(); i++) {
 			EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
 			try {
@@ -112,8 +112,28 @@ public class Voter extends User implements JSONSerializable {
 			}
 		}
 
-		Email email = new Email(subject, caller.getResources().getString(R.string.email_body), arr.toString());
-		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller, getPoll());
+		Email email = new Email(subject, caller.getResources().getString(
+				R.string.email_body), arr.toString());
+		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller,
+				getPoll());
+	}
+
+	/**
+	 * Test whether I've already voted
+	 * 
+	 * @return
+	 */
+	public boolean hasVoted() {
+		return choice != -1;
+	}
+
+	/**
+	 * If I've already voted, return my choice. Otherwise, return -1
+	 * 
+	 * @return
+	 */
+	public int getChoice() {
+		return choice;
 	}
 
 	@Override
@@ -121,19 +141,18 @@ public class Voter extends User implements JSONSerializable {
 		JSONObject obj = new JSONObject();
 
 		obj.put(Voter.JSON_EMAIL, getEmail());
-		
+
 		JSONArray arr = new JSONArray();
-		for(int i = 0; i < keys.length; i++) {
-			if(keys[i] == null) {
+		for (int i = 0; i < keys.length; i++) {
+			if (keys[i] == null) {
 				arr.put(JSONObject.NULL);
-			}
-			else {
+			} else {
 				arr.put(keys[i].toJson());
 			}
 		}
-		obj.put(JSON_KEYS, arr);
-		
-		obj.put(JSON_CHOICE, choice);
+		obj.put(Voter.JSON_KEYS, arr);
+
+		obj.put(Voter.JSON_CHOICE, choice);
 
 		return obj;
 	}
@@ -149,21 +168,21 @@ public class Voter extends User implements JSONSerializable {
 		public Voter fromJson(JSONObject obj) throws JSONException,
 				IllegalArgumentException {
 			String email = obj.getString(Voter.JSON_EMAIL);
-			
-			JSONArray arr = obj.getJSONArray(JSON_KEYS);
+
+			JSONArray arr = obj.getJSONArray(Voter.JSON_KEYS);
 			PublicKey[] keys = new PublicKey[arr.length()];
-			PublicKey.Deserializer d = new PublicKey.Deserializer(mPoll.getGroup());
-			for(int i = 0; i < keys.length; i++) {
+			PublicKey.Deserializer d = new PublicKey.Deserializer(
+					mPoll.getGroup());
+			for (int i = 0; i < keys.length; i++) {
 				JSONObject key = (JSONObject) arr.get(i);
-				if(key.equals(null)) {
+				if (key.equals(null)) {
 					keys[i] = null;
-				}
-				else {
+				} else {
 					keys[i] = d.fromJson(key);
 				}
 			}
-			
-			int choice = obj.getInt(JSON_CHOICE);
+
+			int choice = obj.getInt(Voter.JSON_CHOICE);
 
 			return new Voter(email, mPoll, keys, choice);
 		}

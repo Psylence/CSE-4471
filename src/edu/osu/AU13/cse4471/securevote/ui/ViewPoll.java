@@ -62,6 +62,15 @@ public class ViewPoll extends Activity {
 			displayInfo(R.string.view_poll_not_participant);
 		}
 
+		if (v != null && !v.isReadyToVote()) {
+			displayInfo(R.string.view_poll_need_keys);
+		} else if (v != null && v.isReadyToVote() && !v.hasVoted()) {
+			displayTwoButtons(R.string.no, new DoNothing(), R.string.yes,
+					new DoNothing());
+		} else if (v != null && v.hasVoted()) {
+			displayOneButton(R.string.view_poll_resend_vote, new DoNothing());
+		}
+
 		if (t != null) {
 			displayOneButton(R.string.view_poll_send_pubkey_label,
 					new DoNothing());
