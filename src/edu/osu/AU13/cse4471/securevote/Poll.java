@@ -1,7 +1,10 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -67,6 +70,11 @@ public class Poll implements JSONSerializable {
 	private GroupElement g, G;
 
 	/**
+	 * Keep track of files to delete when deleting this poll.
+	 */
+	private Set<File> filesToDelete = new HashSet<File>();
+
+	/**
 	 * Create a new Poll object
 	 * 
 	 * @param id
@@ -80,8 +88,8 @@ public class Poll implements JSONSerializable {
 	 * @param talliers
 	 *            List of talliers
 	 */
-	public Poll(UUID id, String title, String desc, 
-			List<String> voters, List<String> talliers) {
+	public Poll(UUID id, String title, String desc, List<String> voters,
+			List<String> talliers) {
 		if (id == null || title == null || desc == null) {
 			throw new NullPointerException();
 		}
@@ -133,7 +141,8 @@ public class Poll implements JSONSerializable {
 			G = group.elementFromString(obj.getString(Poll.JSON_BIG_G));
 
 			voters = JSONUtils.fromArray(obj.getJSONArray(Poll.JSON_VOTERS));
-			talliers = JSONUtils.fromArray(obj.getJSONArray(Poll.JSON_TALLIERS));
+			talliers = JSONUtils
+					.fromArray(obj.getJSONArray(Poll.JSON_TALLIERS));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(
 					"JSON object does not encode a Poll", e);
@@ -254,5 +263,15 @@ public class Poll implements JSONSerializable {
 		obj.put(Poll.JSON_BIG_G, G.toString());
 
 		return obj;
+	}
+
+	public void registerFileForDeletion(File extFile) {
+		filesToDelete.add(extFile);
+	}
+
+	public void deleteFiles() {
+		for (File f : filesToDelete) {
+			f.delete();
+		}
 	}
 }
