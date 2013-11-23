@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,30 +21,30 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.Constants;
-import edu.osu.AU13.cse4471.securevote.Email;
-import edu.osu.AU13.cse4471.securevote.Emailer;
+import edu.osu.AU13.cse4471.securevote.DiskPersister;
 import edu.osu.AU13.cse4471.securevote.Poll;
-import edu.osu.AU13.cse4471.securevote.PollDB;
 import edu.osu.AU13.cse4471.securevote.R;
 
 public class MainActivity extends Activity {
 	public static final String DATA_NAME_POLL = "edu.osu.AU13.cse4471.securevote.POLL";
-	
+
 	private ListView mPollList;
 	private ArrayAdapter<Poll> mPollAdapter;
+	private List<UUID> mCurrentPolls = null;
 	private Button mCreatePoll;
-//	private Button testButton;
+
+	// private Button testButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_main);
 
 		mPollList = (ListView) findViewById(R.id.poll_list);
 		mCreatePoll = (Button) findViewById(R.id.create_poll);
-//		testButton = (Button) findViewById(R.id.button1);
+		// testButton = (Button) findViewById(R.id.button1);
 
 		mPollList.setAdapter(mPollAdapter);
 		mPollList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -60,7 +61,8 @@ public class MainActivity extends Activity {
 
 				Poll poll = (Poll) item;
 				Intent intent = new Intent(MainActivity.this, ViewPoll.class);
-				intent.putExtra(Constants.DATA_NAME_POLL, poll.getId());
+				intent.putExtra(Constants.DATA_NAME_POLL, poll.getId()
+						.toString());
 				startActivity(intent);
 			}
 		});
@@ -73,15 +75,15 @@ public class MainActivity extends Activity {
 			}
 		});
 
-//		testButton.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Email email = new Email("Test", "Body");
-//
-//				Emailer.sendEmail(email, "me@farse.com", MainActivity.this);
-//			}
-//		});
+		// testButton.setOnClickListener(new View.OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// Email email = new Email("Test", "Body");
+		//
+		// Emailer.sendEmail(email, "me@farse.com", MainActivity.this);
+		// }
+		// });
 
 		Intent intent = getIntent();
 		if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
@@ -93,8 +95,6 @@ public class MainActivity extends Activity {
 				}
 			}
 		}
-
-		updatePollList();
 	}
 
 	private void processEmailAttachment(File f) {
@@ -144,15 +144,19 @@ public class MainActivity extends Activity {
 			// First, compute a new list of polls
 			@Override
 			public void run() {
-				List<Poll> polls = PollDB.getInstance().getPolls();
+				DiskPersister dp = DiskPersister.getInst();
+				List<UUID> polls = dp.loadPolls(MainActivity.this);
+				if (polls.equals(mCurrentPolls)) {
+					return;
+				}
 
 				final ArrayAdapter<Poll> newAdapter = new ArrayAdapter<Poll>(
 						MainActivity.this, android.R.layout.simple_list_item_1);
 
 				// Save them into a new adapter (in our case, a special form of
 				// List used to hold results for a ListView)
-				for (Poll p : polls) {
-					newAdapter.add(p);
+				for (UUID id : polls) {
+					newAdapter.add(dp.loadPoll(id, MainActivity.this));
 				}
 
 				// Go to the UI thread and update the list with the new results

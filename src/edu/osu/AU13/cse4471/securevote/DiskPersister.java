@@ -1,5 +1,6 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,8 +10,12 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -52,16 +57,21 @@ public class DiskPersister {
 		return DiskPersister.inst;
 	}
 
-	public void save(Poll p, Voter v, Tallier t, Context con)
-			throws JSONException {
+	public void save(Poll p, Voter v, Tallier t, Context con) {
 		UUID id = p.getId();
 		JSONObject obj = new JSONObject();
-		obj.put(DiskPersister.JSON_POLL, p.toJson());
-		if (v != null) {
-			obj.put(DiskPersister.JSON_VOTER, v.toJson());
-		}
-		if (t != null) {
-			obj.put(DiskPersister.JSON_TALLIER, t.toJson());
+		try {
+			obj.put(DiskPersister.JSON_POLL, p.toJson());
+			if (v != null) {
+				obj.put(DiskPersister.JSON_VOTER, v.toJson());
+			}
+			if (t != null) {
+				obj.put(DiskPersister.JSON_TALLIER, t.toJson());
+			}
+		} catch (JSONException e) {
+			Log.e(DiskPersister.class.getSimpleName(),
+					"Error serializing to JSON", e);
+			throw new RuntimeException(e);
 		}
 
 		try {
@@ -96,6 +106,22 @@ public class DiskPersister {
 	public Tallier loadTallier(UUID id, Context con) {
 		Triple triple = loadTriple(id, con);
 		return triple != null ? triple.t : null;
+	}
+
+	public List<UUID> loadPolls(Context con) {
+		Set<UUID> ret = new HashSet<UUID>(cache.keySet());
+
+		File dir = con.getFilesDir();
+		for (File file : dir.listFiles()) {
+			try {
+				UUID id = UUID.fromString(file.getName());
+				ret.add(id);
+			} catch (IllegalArgumentException e) {
+				// suppress - just a bad file in the directory
+			}
+		}
+
+		return new ArrayList<UUID>(ret);
 	}
 
 	private Triple loadTriple(UUID id, Context con) {

@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.osu.AU13.cse4471.securevote.DiskPersister;
 import edu.osu.AU13.cse4471.securevote.EnterEmailActivity;
 import edu.osu.AU13.cse4471.securevote.Poll;
 import edu.osu.AU13.cse4471.securevote.R;
@@ -104,8 +105,9 @@ public class CreatePoll extends FragmentActivity {
 					Toast.makeText(CreatePoll.this, mErrorCode,
 							Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(CreatePoll.this, "Send public key request",
-							Toast.LENGTH_SHORT).show();
+					DiskPersister.getInst()
+							.save(p, null, null, CreatePoll.this);
+					finish();
 				}
 			}
 		});
