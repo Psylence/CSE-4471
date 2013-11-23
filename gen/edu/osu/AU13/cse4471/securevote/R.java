@@ -104,6 +104,7 @@ public final class R {
         public static final int email_add_dialog_message=0x7f040013;
         public static final int email_add_dialog_title=0x7f040012;
         public static final int email_add_label=0x7f040011;
+        public static final int email_body=0x7f040027;
         public static final int email_dialog_default_title=0x7f040016;
         public static final int email_dialog_hint=0x7f040018;
         public static final int email_dialog_message=0x7f040017;
@@ -113,21 +114,21 @@ public final class R {
         public static final int message_pubkeyreq_body_fmt=0x7f040024;
         public static final int message_pubkeyreq_title=0x7f040023;
         public static final int no=0x7f040026;
-        public static final int tallier_send_key=0x7f040028;
-        public static final int tallier_title=0x7f040027;
+        public static final int tallier_send_key=0x7f040029;
+        public static final int tallier_title=0x7f040028;
         public static final int title_activity_create_poll=0x7f04001e;
         public static final int title_activity_enter_email=0x7f040020;
         public static final int title_activity_main=0x7f04001d;
         public static final int title_activity_view_poll=0x7f04001f;
-        public static final int view_poll_already_voted=0x7f04002b;
-        public static final int view_poll_desc_def=0x7f04002a;
-        public static final int view_poll_key_reason=0x7f040030;
-        public static final int view_poll_need_keys=0x7f04002c;
-        public static final int view_poll_send_key=0x7f040031;
-        public static final int view_poll_tallier=0x7f04002d;
-        public static final int view_poll_title_def=0x7f040029;
-        public static final int view_poll_voter=0x7f04002e;
-        public static final int view_poll_votes=0x7f04002f;
+        public static final int view_poll_already_voted=0x7f04002c;
+        public static final int view_poll_desc_def=0x7f04002b;
+        public static final int view_poll_key_reason=0x7f040031;
+        public static final int view_poll_need_keys=0x7f04002d;
+        public static final int view_poll_send_key=0x7f040032;
+        public static final int view_poll_tallier=0x7f04002e;
+        public static final int view_poll_title_def=0x7f04002a;
+        public static final int view_poll_voter=0x7f04002f;
+        public static final int view_poll_votes=0x7f040030;
         public static final int yes=0x7f040025;
     }
     public static final class style {

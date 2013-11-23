@@ -58,11 +58,19 @@ public class Tallier extends User implements JSONSerializable {
 		String[] recipients = (String[])p.getVoters().toArray();
 
 		// Construct and send the email
-		// TODO do something with the public key to get intents to recognize it
 		String title = "Securevote: Public Key From Tallier " + tallierNum;
-		String body = privKey.getPublicKey().toString() + " : " + tallierNum;
+		String attach;
+		try {
+			attach = privKey.getPublicKey().toJson().toString();
+		} catch (JSONException e) {
+			Context context = caller.getApplicationContext();
+			CharSequence text = "Failed to encode key as a JSON object.";
+			int duration = Toast.LENGTH_SHORT;
+			Toast.makeText(context, text, duration).show();
+			return;
+		}
 
-		Email email = new Email(title, body);
+		Email email = new Email(title, caller.getResources().getString(R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
@@ -90,7 +98,6 @@ public class Tallier extends User implements JSONSerializable {
 	
 	public void sendResult(Activity caller) {
 		// Calculate the result
-		// TODO change points to be BigIntegers
 		int total = 0;
 		for(EncryptedPoint point : votes.values()) {
 			GroupElement decrypted = privKey.decode(point.getY());
@@ -107,11 +114,19 @@ public class Tallier extends User implements JSONSerializable {
 		String[] recipients = (String[])p.getVoters().toArray();
 
 		// Construct and send the email
-		// TODO do something with the result to get intents to recognize it
-		String title = "Securevote: Public Key From Tallier " + tallierNum;
-		String body = result.toString();
+		String title = "Securevote: Result From Tallier " + tallierNum;
+		String attach;
+		try {
+			attach = result.toJson().toString();
+		} catch (JSONException e) {
+			Context context = caller.getApplicationContext();
+			CharSequence text = "Failed to encode result as a JSON object.";
+			int duration = Toast.LENGTH_SHORT;
+			Toast.makeText(context, text, duration).show();
+			return;
+		}
 
-		Email email = new Email(title, body);
+		Email email = new Email(title, caller.getResources().getString(R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 

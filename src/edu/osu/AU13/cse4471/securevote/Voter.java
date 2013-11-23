@@ -2,6 +2,7 @@ package edu.osu.AU13.cse4471.securevote;
 
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,9 +14,11 @@ import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
 
 public class Voter extends User implements JSONSerializable {
 	private static final String JSON_EMAIL = "email";
+	private static final String JSON_KEYS = "keys";
+	private static final String JSON_CHOICE = "choice";
 
 	private PublicKey[] keys;
-	private boolean hasVoted;
+	private int choice;
 
 	/**
 	 * Create a Voter, assigned the given email address
@@ -30,6 +33,13 @@ public class Voter extends User implements JSONSerializable {
 		for (int i = 0; i < numTalliers; i++) {
 			keys[i] = null;
 		}
+		choice = -1;
+	}
+	
+	public Voter(String email, Poll poll, PublicKey[] keys, int choice) {
+		super(email, poll);
+		this.keys = keys;
+		this.choice = choice;
 	}
 
 	public void receiveKey(Activity caller, String email, PublicKey key) {
@@ -66,7 +76,7 @@ public class Voter extends User implements JSONSerializable {
 		return true;
 	}
 
-	public void vote(Activity caller, boolean choice) {
+	public void vote(Activity caller, boolean selection) {
 		if (!isReadyToVote()) {
 			Context context = caller.getApplicationContext();
 			CharSequence text = "You need a key from every tallier to vote.";
@@ -75,28 +85,35 @@ public class Voter extends User implements JSONSerializable {
 			return;
 		}
 
+		if(choice == -1) {
+			choice = selection ? 1 : 0;
+		}
+		
 		// Encode the choice
 		SecretPolynomial poly = new SecretPolynomial(getPoll().getTalliers()
-				.size(), choice ? 1 : 0);
+				.size(), choice);
 
 		// Create an email that can be sent to every tallier
 		List<String> talliers = getPoll().getTalliers();
 
 		String subject = "Securevoting: Encrypted Vote";
-		String body = "{";
+		JSONArray arr = new JSONArray();
+		
 		for (int i = 0; i < talliers.size(); i++) {
 			EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
-			// body += do something here that builds up the body
+			try {
+				arr.put(p.toJson());
+			} catch (JSONException e) {
+				Context context = caller.getApplicationContext();
+				CharSequence text = "Failed to encode point as JSON object.";
+				int duration = Toast.LENGTH_SHORT;
+				Toast.makeText(context, text, duration).show();
+				return;
+			}
 		}
 
-		Email email = new Email(subject, body);
+		Email email = new Email(subject, caller.getResources().getString(R.string.email_body), arr.toString());
 		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller, getPoll());
-
-		hasVoted = true;
-	}
-
-	public boolean hasVoted() {
-		return hasVoted;
 	}
 
 	@Override
@@ -104,6 +121,19 @@ public class Voter extends User implements JSONSerializable {
 		JSONObject obj = new JSONObject();
 
 		obj.put(Voter.JSON_EMAIL, getEmail());
+		
+		JSONArray arr = new JSONArray();
+		for(int i = 0; i < keys.length; i++) {
+			if(keys[i] == null) {
+				arr.put(JSONObject.NULL);
+			}
+			else {
+				arr.put(keys[i].toJson());
+			}
+		}
+		obj.put(JSON_KEYS, arr);
+		
+		obj.put(JSON_CHOICE, choice);
 
 		return obj;
 	}
@@ -119,8 +149,23 @@ public class Voter extends User implements JSONSerializable {
 		public Voter fromJson(JSONObject obj) throws JSONException,
 				IllegalArgumentException {
 			String email = obj.getString(Voter.JSON_EMAIL);
+			
+			JSONArray arr = obj.getJSONArray(JSON_KEYS);
+			PublicKey[] keys = new PublicKey[arr.length()];
+			PublicKey.Deserializer d = new PublicKey.Deserializer(mPoll.getGroup());
+			for(int i = 0; i < keys.length; i++) {
+				JSONObject key = (JSONObject) arr.get(i);
+				if(key.equals(null)) {
+					keys[i] = null;
+				}
+				else {
+					keys[i] = d.fromJson(key);
+				}
+			}
+			
+			int choice = obj.getInt(JSON_CHOICE);
 
-			return new Voter(email, mPoll);
+			return new Voter(email, mPoll, keys, choice);
 		}
 	}
 }
