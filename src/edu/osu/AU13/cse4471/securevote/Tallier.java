@@ -63,7 +63,7 @@ public class Tallier extends User implements JSONSerializable {
 		String body = privKey.getPublicKey().toString() + " : " + tallierNum;
 
 		Email email = new Email(title, body);
-		Emailer.sendEmail(email, recipients, caller);
+		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
 	public void receiveVote(Activity caller, EncryptedPoint vote, String email) {
@@ -112,7 +112,7 @@ public class Tallier extends User implements JSONSerializable {
 		String body = result.toString();
 
 		Email email = new Email(title, body);
-		Emailer.sendEmail(email, recipients, caller);
+		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
 	/**

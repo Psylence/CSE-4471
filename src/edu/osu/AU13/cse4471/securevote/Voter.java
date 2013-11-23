@@ -90,7 +90,7 @@ public class Voter extends User implements JSONSerializable {
 		}
 
 		Email email = new Email(subject, body);
-		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller);
+		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller, getPoll());
 
 		hasVoted = true;
 	}

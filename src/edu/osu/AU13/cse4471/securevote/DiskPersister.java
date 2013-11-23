@@ -155,13 +155,13 @@ public class DiskPersister {
 			if (fileObj.has(DiskPersister.JSON_VOTER)) {
 				JSONObject voterObj = fileObj
 						.getJSONObject(DiskPersister.JSON_VOTER);
-				v = (new Voter.VoterDeserializer(p)).fromJson(voterObj);
+				v = (new Voter.Deserializer(p)).fromJson(voterObj);
 			}
 
 			if (fileObj.has(DiskPersister.JSON_TALLIER)) {
 				JSONObject tallierObj = fileObj
 						.getJSONObject(DiskPersister.JSON_TALLIER);
-				t = (new Tallier.TallierDeserializer(p)).fromJson(tallierObj);
+				t = (new Tallier.Deserializer(p)).fromJson(tallierObj);
 			}
 
 			return new Triple(p, v, t);
