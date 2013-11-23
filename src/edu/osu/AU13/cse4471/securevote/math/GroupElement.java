@@ -2,6 +2,7 @@ package edu.osu.AU13.cse4471.securevote.math;
 
 import java.math.BigInteger;
 
+
 public abstract class GroupElement {
 	/**
 	 * Retrieves the group to which this element belongs.

@@ -108,10 +108,10 @@ public class Voter extends User implements JSONSerializable {
 		return obj;
 	}
 
-	public static class VoterDeserializer implements JSONDeserializer<Voter> {
+	public static class Deserializer implements JSONDeserializer<Voter> {
 		private final Poll mPoll;
 
-		public VoterDeserializer(Poll p) {
+		public Deserializer(Poll p) {
 			mPoll = p;
 		}
 

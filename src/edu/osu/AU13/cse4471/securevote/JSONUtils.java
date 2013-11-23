@@ -50,16 +50,14 @@ public class JSONUtils {
 		public T fromJson(JSONObject obj) throws JSONException;
 	}
 
-	public static JSONArray toArray(List<String> coll) throws JSONException {
-		String result = "[";
+	public static JSONArray toStringArray(List<String> coll) throws JSONException {
+		JSONArray arr = new JSONArray();
 
 		for (String str : coll) {
-			result += str + ", ";
+			arr.put(str);
 		}
 
-		result += "]";
-
-		return new JSONArray(result);
+		return arr;
 	}
 
 	/**

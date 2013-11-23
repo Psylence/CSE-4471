@@ -247,8 +247,8 @@ public class Poll implements JSONSerializable {
 		obj.put(Poll.JSON_ID, id.toString());
 		obj.put(Poll.JSON_TITLE, title);
 		obj.put(Poll.JSON_DESC, desc);
-		obj.put(Poll.JSON_VOTERS, JSONUtils.toArray(voters));
-		obj.put(Poll.JSON_TALLIERS, JSONUtils.toArray(talliers));
+		obj.put(Poll.JSON_VOTERS, JSONUtils.toStringArray(voters));
+		obj.put(Poll.JSON_TALLIERS, JSONUtils.toStringArray(talliers));
 		obj.put(Poll.JSON_GROUP, group.toString());
 		obj.put(Poll.JSON_LITTLE_G, g.toString());
 		obj.put(Poll.JSON_BIG_G, G.toString());

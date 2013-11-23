@@ -4,6 +4,9 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Sample implementation of a Group. Note that the integers mod <i>m</i> is
  * <b>NOT</b> a good group for cryptography, since several problems (such as the

@@ -138,7 +138,7 @@ public class Tallier extends User implements JSONSerializable {
 	 * @author andrew
 	 * 
 	 */
-	public static class TallierDeserializer implements
+	public static class Deserializer implements
 			JSONDeserializer<Tallier> {
 		private Poll mPoll;
 
@@ -149,7 +149,7 @@ public class Tallier extends User implements JSONSerializable {
 		 * 
 		 * @param p
 		 */
-		public TallierDeserializer(Poll p) {
+		public Deserializer(Poll p) {
 			mPoll = p;
 		}
 
@@ -160,8 +160,7 @@ public class Tallier extends User implements JSONSerializable {
 
 			// Deserialize the private key
 			PrivateKey privKey;
-			String privKeyStr = obj.getString(Tallier.JSON_PRIVKEY);
-			privKey = PrivateKey.fromString(mPoll.getGroup(), privKeyStr);
+			privKey = new PrivateKey.Deserializer().fromJson(obj.getJSONObject(JSON_PRIVKEY));
 
 			return new Tallier(email, mPoll, privKey);
 		}
