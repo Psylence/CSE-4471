@@ -76,7 +76,8 @@ public class Tallier extends User implements JSONSerializable {
 			return;
 		}
 
-		Email email = new Email(title, caller.getResources().getString(R.string.email_body), attach);
+		Email email = new Email(title, caller.getResources().getString(
+				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
@@ -133,7 +134,8 @@ public class Tallier extends User implements JSONSerializable {
 			return;
 		}
 
-		Email email = new Email(title, caller.getResources().getString(R.string.email_body), attach);
+		Email email = new Email(title, caller.getResources().getString(
+				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 

@@ -114,12 +114,13 @@ public final class R {
         public static final int title_activity_enter_email=0x7f040020;
         public static final int title_activity_main=0x7f04001d;
         public static final int title_activity_view_poll=0x7f04001f;
-        public static final int view_poll_count_votes=0x7f040030;
+        public static final int view_poll_count_votes=0x7f040031;
         public static final int view_poll_desc_def=0x7f04002b;
-        public static final int view_poll_need_keys=0x7f040031;
-        public static final int view_poll_need_votes=0x7f04002e;
+        public static final int view_poll_need_keys=0x7f040032;
+        public static final int view_poll_need_votes=0x7f04002f;
         public static final int view_poll_not_participant=0x7f04002d;
-        public static final int view_poll_send_point=0x7f04002f;
+        public static final int view_poll_resend_vote=0x7f04002e;
+        public static final int view_poll_send_point=0x7f040030;
         public static final int view_poll_send_pubkey_label=0x7f04002c;
         public static final int view_poll_title_def=0x7f04002a;
         public static final int yes=0x7f040025;
