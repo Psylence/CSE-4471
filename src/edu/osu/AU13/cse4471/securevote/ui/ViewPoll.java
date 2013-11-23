@@ -23,8 +23,7 @@ public class ViewPoll extends Activity {
 	private TextView mDesc;
 	private Button mVote0;
 	private Button mVote1;
-	private TextView mAlreadyVoted;
-	private TextView mNeedKeys;
+	private TextView mInfo;
 	private UUID mId;
 
 	@Override
@@ -38,8 +37,7 @@ public class ViewPoll extends Activity {
 		mDesc = (TextView) findViewById(R.id.view_poll_desc);
 		mVote0 = (Button) findViewById(R.id.view_poll_vote_0);
 		mVote1 = (Button) findViewById(R.id.view_poll_vote_1);
-		mAlreadyVoted = (TextView) findViewById(R.id.view_poll_already_voted);
-		mNeedKeys = (TextView) findViewById(R.id.view_poll_need_keys);
+		mInfo = (TextView) findViewById(R.id.view_poll_info);
 
 		Intent intent = getIntent();
 
@@ -60,22 +58,30 @@ public class ViewPoll extends Activity {
 		mTitle.setText(poll.getTitle());
 		mDesc.setText(poll.getDesc());
 
-		if (voter == null || !voter.isReadyToVote()) {
-			mVote0.setVisibility(View.GONE);
-			mVote1.setVisibility(View.GONE);
-			mAlreadyVoted.setVisibility(View.GONE);
-			mNeedKeys.setVisibility(View.VISIBLE);
-		} else if (voter.isReadyToVote() && !voter.hasVoted()) {
-			mVote0.setVisibility(View.VISIBLE);
-			mVote1.setVisibility(View.VISIBLE);
-			mAlreadyVoted.setVisibility(View.GONE);
-			mNeedKeys.setVisibility(View.GONE);
-		} else {
-			mVote0.setVisibility(View.GONE);
-			mVote1.setVisibility(View.GONE);
-			mAlreadyVoted.setVisibility(View.VISIBLE);
-			mNeedKeys.setVisibility(View.GONE);
-		}
+		displayInfo(R.string.view_poll_need_keys);
+	}
+
+	private void displayOneButton(int rId) {
+		mVote0.setVisibility(View.VISIBLE);
+		mVote1.setVisibility(View.GONE);
+		mInfo.setVisibility(View.GONE);
+		mVote1.setText(rId);
+	}
+
+	private void displayTwoButtons(int rId0, int rId1) {
+		mVote0.setVisibility(View.VISIBLE);
+		mVote1.setVisibility(View.VISIBLE);
+		mInfo.setVisibility(View.GONE);
+		mVote0.setText(rId0);
+		mVote1.setText(rId1);
+	}
+
+	private void displayInfo(int rId) {
+		mVote0.setVisibility(View.GONE);
+		mVote1.setVisibility(View.GONE);
+		mInfo.setVisibility(View.VISIBLE);
+		mInfo.setText(rId);
+
 	}
 
 	@Override

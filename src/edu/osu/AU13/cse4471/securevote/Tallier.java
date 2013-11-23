@@ -1,6 +1,5 @@
 package edu.osu.AU13.cse4471.securevote;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,7 +9,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
-
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
 import edu.osu.AU13.cse4471.securevote.math.GroupElement;
@@ -18,11 +16,14 @@ import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 public class Tallier extends User implements JSONSerializable {
 	private static final String JSON_EMAIL = "email";
 	private static final String JSON_PRIVKEY = "privkey";
+	public static final String JSON_HASSENTPOLL = "hasSentKey";
 
 	private PrivateKey privKey;
-	// A map is used in the case of needing to ignore a vote because they failed to send it to every Tallier
+	// A map is used in the case of needing to ignore a vote because they failed
+	// to send it to every Tallier
 	private Map<String, EncryptedPoint> votes;
 	private int tallierNum;
+	private boolean hasSentKey;
 
 	/**
 	 * Create a Tallier with the given email, belonging to the given Poll
@@ -30,32 +31,33 @@ public class Tallier extends User implements JSONSerializable {
 	 * @param email
 	 * @param poll
 	 */
-	public Tallier(String email, Poll poll, int tallierNum) {
-		super(email, poll);
-
-		this.tallierNum = tallierNum;
-		votes = new TreeMap<String, EncryptedPoint>();
-		privKey = new PrivateKey(poll.getGroup(), poll.getg());
+	public Tallier(String email, Poll poll) {
+		this(email, poll, new PrivateKey(poll.getGroup(), poll.getg()), false);
 	}
 
 	/**
-	 * Create a Taillier with the given email, belonging to the given poll, with
+	 * Create a Tallier with the given email, belonging to the given poll, with
 	 * the given public key
 	 * 
 	 * @param email
 	 * @param poll
-	 * @param pubKey
+	 * @param privKey
+	 * @param hasSentKey
 	 */
-	public Tallier(String email, Poll poll, PrivateKey privKey) {
+	public Tallier(String email, Poll poll, PrivateKey privKey,
+			boolean hasSentKey) {
 		super(email, poll);
 		this.privKey = privKey;
+		this.votes = new TreeMap<String, EncryptedPoint>();
+		this.tallierNum = poll.getTalliers().indexOf(email);
+		this.hasSentKey = hasSentKey;
 	}
 
 	public void sendPublicKey(Activity caller) {
 		Poll p = this.getPoll();
 
 		// Get list of people to send public key to
-		String[] recipients = (String[])p.getVoters().toArray();
+		String[] recipients = (String[]) p.getVoters().toArray();
 
 		// Construct and send the email
 		String title = "Securevote: Public Key From Tallier " + tallierNum;
@@ -95,23 +97,24 @@ public class Tallier extends User implements JSONSerializable {
 		}
 
 	}
-	
+
 	public void sendResult(Activity caller) {
 		// Calculate the result
 		int total = 0;
-		for(EncryptedPoint point : votes.values()) {
+		for (EncryptedPoint point : votes.values()) {
 			GroupElement decrypted = privKey.decode(point.getY());
-			if(decrypted.getValue().bitLength() >= 32)
-			total += decrypted.getValue().intValue();
+			if (decrypted.getValue().bitLength() >= 32) {
+				total += decrypted.getValue().intValue();
+			}
 		}
-		
+
 		SecretPoint result = new SecretPoint(total, tallierNum);
-		
+
 		// Send the result out to all of the voters
 		Poll p = this.getPoll();
 
 		// Get list of people to send public key to
-		String[] recipients = (String[])p.getVoters().toArray();
+		String[] recipients = (String[]) p.getVoters().toArray();
 
 		// Construct and send the email
 		String title = "Securevote: Result From Tallier " + tallierNum;
@@ -138,9 +141,8 @@ public class Tallier extends User implements JSONSerializable {
 		JSONObject obj = new JSONObject();
 
 		obj.put(Tallier.JSON_EMAIL, getEmail());
-		if (privKey != null) {
-			obj.put(Tallier.JSON_PRIVKEY, privKey.getPublicKey().toString());
-		}
+		obj.put(Tallier.JSON_PRIVKEY, privKey.getPublicKey().toString());
+		obj.put(Tallier.JSON_HASSENTPOLL, hasSentKey);
 
 		return obj;
 	}
@@ -153,8 +155,7 @@ public class Tallier extends User implements JSONSerializable {
 	 * @author andrew
 	 * 
 	 */
-	public static class Deserializer implements
-			JSONDeserializer<Tallier> {
+	public static class Deserializer implements JSONDeserializer<Tallier> {
 		private Poll mPoll;
 
 		/**
@@ -175,9 +176,11 @@ public class Tallier extends User implements JSONSerializable {
 
 			// Deserialize the private key
 			PrivateKey privKey;
-			privKey = new PrivateKey.Deserializer().fromJson(obj.getJSONObject(JSON_PRIVKEY));
+			privKey = new PrivateKey.Deserializer().fromJson(obj
+					.getJSONObject(Tallier.JSON_PRIVKEY));
+			boolean hasSentKey = obj.getBoolean(Tallier.JSON_HASSENTPOLL);
 
-			return new Tallier(email, mPoll, privKey);
+			return new Tallier(email, mPoll, privKey, hasSentKey);
 		}
 	}
 
