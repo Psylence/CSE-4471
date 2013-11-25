@@ -2,6 +2,7 @@ package edu.osu.AU13.cse4471.securevote;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -88,11 +89,20 @@ public class Tallier extends User implements JSONSerializable {
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
-	public void receiveVote(Activity caller, EncryptedPoint vote, String email) {
+	public void receiveVote(Activity caller, List<EncryptedPoint> poly, String email) {
+		EncryptedPoint vote = null;
+		
+		for(EncryptedPoint point : poly) {
+			if(point.getX() == tallierNum + 1) {
+				vote = point;
+				break;
+			}
+		}
+		
 		// Ensure the point is meant for you
-		if (vote.getX() != tallierNum + 1) {
+		if (vote == null) {
 			Context context = caller.getApplicationContext();
-			CharSequence text = "Vote isn't encrypted for this tallier.";
+			CharSequence text = "No vote is encrypted for this tallier.";
 			int duration = Toast.LENGTH_SHORT;
 			Toast.makeText(context, text, duration).show();
 		}
