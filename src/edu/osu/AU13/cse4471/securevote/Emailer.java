@@ -13,12 +13,13 @@ public class Emailer {
 		Intent intent = new Intent();
 
 		intent.setAction(Intent.ACTION_SEND);
-		intent.setType("message/rfc822");
 
 		intent.putExtra(Intent.EXTRA_EMAIL, recipients);
 		intent.putExtra(Intent.EXTRA_SUBJECT, email.getSubject());
 		intent.putExtra(Intent.EXTRA_TEXT, email.getBody());
 		intent.putExtra(Intent.EXTRA_STREAM,
 				Uri.fromFile(email.getAttach(caller, poll)));
+		intent.setType("application/secure-vote-poll");
+		caller.startActivity(intent);
 	}
 }

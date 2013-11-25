@@ -1,13 +1,8 @@
 package edu.osu.AU13.cse4471.securevote.ui;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 import java.util.UUID;
-
-import org.json.JSONException;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -17,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +24,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.DiskPersister;
-import edu.osu.AU13.cse4471.securevote.Email;
-import edu.osu.AU13.cse4471.securevote.Emailer;
 import edu.osu.AU13.cse4471.securevote.EnterEmailActivity;
 import edu.osu.AU13.cse4471.securevote.Poll;
+import edu.osu.AU13.cse4471.securevote.ProtocolHandler;
 import edu.osu.AU13.cse4471.securevote.R;
 
 public class CreatePoll extends FragmentActivity {
@@ -115,7 +108,7 @@ public class CreatePoll extends FragmentActivity {
 				} else {
 					DiskPersister.getInst()
 							.save(p, null, null, CreatePoll.this);
-					sendPoll(p);
+					ProtocolHandler.sendPoll(p, CreatePoll.this);
 					finish();
 				}
 			}
@@ -132,28 +125,6 @@ public class CreatePoll extends FragmentActivity {
 		mTallierAdapter.registerDataSetObserver(obs);
 
 		updateListViews();
-	}
-
-	private void sendPoll(Poll p) {
-		String subject = getResources().getString(R.string.msg_newpoll_subject);
-		String body = String.format(Locale.US,
-				getResources().getString(R.string.msg_newpoll_body),
-				p.getTitle(), p.getDesc());
-		String attachment;
-		try {
-			attachment = p.toJson().toString();
-		} catch (JSONException e) {
-			Log.e(CreatePoll.class.getSimpleName(), "Error serializing poll", e);
-			return;
-		}
-
-		Email email = new Email(subject, body, attachment);
-
-		Set<String> recipSet = new HashSet<String>(p.getVoters());
-		recipSet.addAll(p.getTalliers());
-		String[] recipients = recipSet.toArray(new String[recipSet.size()]);
-
-		Emailer.sendEmail(email, recipients, this, p);
 	}
 
 	private void updateListViews() {

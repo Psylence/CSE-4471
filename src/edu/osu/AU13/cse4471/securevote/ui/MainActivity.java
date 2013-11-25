@@ -3,7 +3,10 @@ package edu.osu.AU13.cse4471.securevote.ui;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +27,7 @@ import android.widget.ListView;
 import edu.osu.AU13.cse4471.securevote.Constants;
 import edu.osu.AU13.cse4471.securevote.DiskPersister;
 import edu.osu.AU13.cse4471.securevote.Poll;
+import edu.osu.AU13.cse4471.securevote.ProtocolHandler;
 import edu.osu.AU13.cse4471.securevote.R;
 
 public class MainActivity extends Activity {
@@ -75,32 +79,34 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		// testButton.setOnClickListener(new View.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// Email email = new Email("Test", "Body");
-		//
-		// Emailer.sendEmail(email, "me@farse.com", MainActivity.this);
-		// }
-		// });
-
 		Intent intent = getIntent();
 		if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
-			Uri uri = intent.getData();
-			if (uri != null && uri.getScheme().equals("file")) {
-				File f = new File(uri.getPath());
-				if (f.canRead()) {
-					processEmailAttachment(f);
+			try {
+				Uri uri = intent.getData();
+				Reader in = null;
+				if (uri != null && uri.getScheme().equals("file")) {
+					File f = new File(uri.getPath());
+					if (f.canRead()) {
+						in = new FileReader(f);
+					}
+				} else if (uri != null && uri.getScheme().equals("content")) {
+					InputStream is = getContentResolver().openInputStream(uri);
+					in = new InputStreamReader(is, Charset.defaultCharset());
 				}
+
+				if (in != null) {
+					processEmailAttachment(in);
+				}
+			} catch (IOException e) {
+				Log.e(MainActivity.class.getSimpleName(),
+						"Error reading attachment", e);
 			}
 		}
 	}
 
-	private void processEmailAttachment(File f) {
+	private void processEmailAttachment(Reader r) throws IOException {
 		String fileContents = "<no file found>";
 		try {
-			Reader r = new FileReader(f);
 			StringBuilder sb = new StringBuilder();
 			char[] buf = new char[4096];
 			int num;
@@ -126,6 +132,8 @@ public class MainActivity extends Activity {
 					"Invalid attachment contents", e);
 			Log.i(MainActivity.class.getSimpleName(), fileContents);
 		}
+
+		ProtocolHandler.handle(json);
 	}
 
 	@Override
