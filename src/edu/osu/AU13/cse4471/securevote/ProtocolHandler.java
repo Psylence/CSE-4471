@@ -32,10 +32,23 @@ public class ProtocolHandler {
 				ProtocolHandler.newPoll(json, con);
 			} else if (Constants.PHASE_VOTE.equals(phase)) {
 				ProtocolHandler.receiveVote(json, con);
+			} else if (Constants.PHASE_PUBLIC_KEY.equals(phase)) {
+				ProtocolHandler.receivePublicKey(json, con);
 			}
 		} catch (JSONException e) {
 			Log.e(ProtocolHandler.class.getSimpleName(), "JSON parse error", e);
 		}
+	}
+
+	private static void receivePublicKey(JSONObject json, Context con)
+			throws JSONException {
+		UUID id = UUID.fromString(json.getString(Constants.JSON_POLL_ID));
+		Voter v = DiskPersister.getInst().loadVoter(id, con);
+		Poll p = v.getPoll();
+		PublicKey key = (new PublicKey.Deserializer(p.getGroup()))
+				.fromJson(json.getJSONObject(Constants.JSON_KEY));
+		String email = json.getString(Constants.JSON_KEY_FROM);
+		v.receiveKey(con, email, key);
 	}
 
 	private static void receiveVote(JSONObject json, Context con)

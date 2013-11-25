@@ -69,13 +69,19 @@ public class Tallier extends User implements JSONSerializable {
 		Poll p = this.getPoll();
 
 		// Get list of people to send public key to
-		String[] recipients = (String[]) p.getVoters().toArray();
+		String[] recipients = p.getVoters().toArray(new String[0]);
 
 		// Construct and send the email
 		String title = "Securevote: Public Key From Tallier " + tallierNum;
 		String attach;
 		try {
-			attach = privKey.getPublicKey().toJson().toString();
+			JSONObject obj = new JSONObject();
+			obj.put(Constants.JSON_PHASE, Constants.PHASE_PUBLIC_KEY);
+			obj.put(Constants.JSON_KEY, privKey.getPublicKey().toJson());
+			obj.put(Constants.JSON_KEY_FROM, getEmail());
+			obj.put(Constants.JSON_POLL_ID, getPoll().getId());
+
+			attach = obj.toString();
 		} catch (JSONException e) {
 			Context context = caller.getApplicationContext();
 			CharSequence text = "Failed to encode key as a JSON object.";
@@ -89,16 +95,17 @@ public class Tallier extends User implements JSONSerializable {
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
-	public void receiveVote(Activity caller, List<EncryptedPoint> poly, String email) {
+	public void receiveVote(Context caller, List<EncryptedPoint> poly,
+			String email) {
 		EncryptedPoint vote = null;
-		
-		for(EncryptedPoint point : poly) {
-			if(point.getX() == tallierNum + 1) {
+
+		for (EncryptedPoint point : poly) {
+			if (point.getX() == tallierNum + 1) {
 				vote = point;
 				break;
 			}
 		}
-		
+
 		// Ensure the point is meant for you
 		if (vote == null) {
 			Context context = caller.getApplicationContext();
@@ -109,7 +116,7 @@ public class Tallier extends User implements JSONSerializable {
 		// Check to see if this vote has been cast already
 		else if (votes.containsKey(email)) {
 			Context context = caller.getApplicationContext();
-			CharSequence text = "Vote has already been cast for this person.";
+			CharSequence text = "Vote has already been cast by this person.";
 			int duration = Toast.LENGTH_SHORT;
 			Toast.makeText(context, text, duration).show();
 		}
@@ -130,13 +137,13 @@ public class Tallier extends User implements JSONSerializable {
 			}
 		}
 
-		SecretPoint result = new SecretPoint(total, tallierNum);
+		SecretPoint result = new SecretPoint(tallierNum, total);
 
 		// Send the result out to all of the voters
 		Poll p = this.getPoll();
 
 		// Get list of people to send result to
-		String[] recipients = (String[]) p.getTalliers().toArray();
+		String[] recipients = p.getTalliers().toArray(new String[0]);
 
 		// Construct and send the email
 		String title = "Securevote: Result From Tallier " + tallierNum;
@@ -155,21 +162,22 @@ public class Tallier extends User implements JSONSerializable {
 				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
-	
+
 	public void receiveResult(Activity caller, SecretPoint point) {
 		points.add(point);
 	}
-	
+
 	public int getFinalSum(Activity caller) {
-		if(!hasAllVotes()) {
+		if (!hasAllVotes()) {
 			Context context = caller.getApplicationContext();
 			CharSequence text = "We do not have all results yet.";
 			int duration = Toast.LENGTH_SHORT;
 			Toast.makeText(context, text, duration).show();
 			return -1;
 		}
-		
-		SecretPolynomial poly = new SecretPolynomial((SecretPoint[]) points.toArray());
+
+		SecretPolynomial poly = new SecretPolynomial(
+				points.toArray(new SecretPoint[0]));
 		return poly.getSecret();
 	}
 
