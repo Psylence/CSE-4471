@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +20,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
 import edu.osu.AU13.cse4471.securevote.ui.CreatePoll;
 
 public class ProtocolHandler {
@@ -26,10 +30,41 @@ public class ProtocolHandler {
 			String phase = json.getString(Constants.JSON_PHASE);
 			if (Constants.PHASE_NEWPOLL.equals(phase)) {
 				ProtocolHandler.newPoll(json, con);
+			} else if (Constants.PHASE_VOTE.equals(phase)) {
+				ProtocolHandler.receiveVote(json, con);
 			}
 		} catch (JSONException e) {
 			Log.e(ProtocolHandler.class.getSimpleName(), "JSON parse error", e);
 		}
+	}
+
+	private static void receiveVote(JSONObject json, Context con)
+			throws JSONException {
+
+		UUID id = UUID.fromString(json.getString(Constants.JSON_POLL_ID));
+		Tallier t = DiskPersister.getInst().loadTallier(id, con);
+		Poll poll = DiskPersister.getInst().loadPoll(id, con);
+
+		if (t == null) {
+			Toast.makeText(
+					con,
+					"You don't seem to be a tallier in the poll you just opened.",
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		List<EncryptedPoint> points = new ArrayList<EncryptedPoint>();
+
+		JSONArray arr = json.getJSONArray(Constants.JSON_ENCR_POINTS);
+
+		JSONDeserializer<EncryptedPoint> deser = new EncryptedPoint.Deserializer(
+				poll.getGroup());
+		for (int i = 0, l = arr.length(); i < l; i++) {
+			points.add(deser.fromJson(arr.getJSONObject(i)));
+		}
+
+		t.receiveVote(con, points, json.getString(Constants.JSON_VOTE_FROM));
+
 	}
 
 	private static void newPoll(JSONObject json, Context con)

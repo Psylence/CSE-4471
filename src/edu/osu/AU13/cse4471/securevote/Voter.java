@@ -96,6 +96,11 @@ public class Voter extends User implements JSONSerializable {
 			EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
 			try {
 				arr.put(p.toJson());
+
+				JSONObject obj = new JSONObject();
+				obj.put(Constants.JSON_PHASE, Constants.PHASE_VOTE);
+				obj.put(Constants.JSON_ENCR_POINTS, arr);
+				obj.put(Constants.JSON_POLL_ID, getPoll().getId());
 			} catch (JSONException e) {
 				Context context = caller.getApplicationContext();
 				CharSequence text = "Failed to encode point as JSON object.";
@@ -145,10 +150,11 @@ public class Voter extends User implements JSONSerializable {
 	 * @return
 	 */
 	public int getChoice() {
-		if (poly == null)
+		if (poly == null) {
 			return -1;
-		else
+		} else {
 			return poly.getSecret();
+		}
 	}
 
 	@Override
@@ -167,10 +173,11 @@ public class Voter extends User implements JSONSerializable {
 		}
 		obj.put(Voter.JSON_KEYS, arr);
 
-		if (poly == null)
-			obj.put(JSON_CHOICE, JSONObject.NULL);
-		else
+		if (poly == null) {
+			obj.put(Voter.JSON_CHOICE, JSONObject.NULL);
+		} else {
 			obj.put(Voter.JSON_CHOICE, poly.toJson());
+		}
 
 		return obj;
 	}
@@ -200,12 +207,11 @@ public class Voter extends User implements JSONSerializable {
 				}
 			}
 
-			JSONObject polyObj = obj.getJSONObject(JSON_CHOICE);
+			JSONObject polyObj = obj.getJSONObject(Voter.JSON_CHOICE);
 			SecretPolynomial poly;
-			if(polyObj.equals(JSONObject.NULL)) {
+			if (polyObj.equals(JSONObject.NULL)) {
 				poly = null;
-			}
-			else {
+			} else {
 				poly = new SecretPolynomial.Deserializer().fromJson(polyObj);
 			}
 
