@@ -1,10 +1,20 @@
 package edu.osu.AU13.cse4471.securevote;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Random;
 
-public class SecretPolynomial {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
+import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
+
+public class SecretPolynomial implements JSONSerializable {
 	private static final double EPSILON = 0.0000001;
+	
+	private static final String JSON_POINTS = "points";
 	
 	private int order;
 	private int secret;
@@ -84,5 +94,30 @@ public class SecretPolynomial {
 	
 	public int getSecret() {
 		return secret;
+	}
+
+	@Override
+	public JSONObject toJson() throws JSONException {
+		JSONArray arr = new JSONArray();
+		for(SecretPoint p : points) {
+			arr.put(p.toJson());
+		}
+		
+		return new JSONObject().put(JSON_POINTS, arr);
+	}
+	
+	public static class Deserializer implements JSONDeserializer<SecretPolynomial> {
+
+		public Deserializer() {}
+		
+		@Override
+		public SecretPolynomial fromJson(JSONObject obj) throws JSONException {
+			JSONArray arr = obj.getJSONArray(JSON_POINTS);
+			
+			ArrayList<SecretPoint> points = JSONUtils.fromArray(arr, new SecretPoint.Deserializer());
+			
+			return new SecretPolynomial((SecretPoint[]) points.toArray());
+		}
+		
 	}
 }

@@ -18,7 +18,7 @@ public class Voter extends User implements JSONSerializable {
 	private static final String JSON_CHOICE = "choice";
 
 	private PublicKey[] keys;
-	private int choice;
+	private SecretPolynomial poly;
 
 	/**
 	 * Create a Voter, assigned the given email address
@@ -33,13 +33,14 @@ public class Voter extends User implements JSONSerializable {
 		for (int i = 0; i < numTalliers; i++) {
 			keys[i] = null;
 		}
-		choice = -1;
+		poly = null;
 	}
 
-	public Voter(String email, Poll poll, PublicKey[] keys, int choice) {
+	public Voter(String email, Poll poll, PublicKey[] keys,
+			SecretPolynomial poly) {
 		super(email, poll);
 		this.keys = keys;
-		this.choice = choice;
+		this.poly = poly;
 	}
 
 	public void receiveKey(Activity caller, String email, PublicKey key) {
@@ -76,22 +77,14 @@ public class Voter extends User implements JSONSerializable {
 		return true;
 	}
 
-	public void vote(Activity caller, boolean selection) {
-		if (!isReadyToVote()) {
+	public void vote(Activity caller) {
+		if (!hasVoted()) {
 			Context context = caller.getApplicationContext();
-			CharSequence text = "You need a key from every tallier to vote.";
+			CharSequence text = "You must make a choice before a vote can be sent.";
 			int duration = Toast.LENGTH_SHORT;
 			Toast.makeText(context, text, duration).show();
 			return;
 		}
-
-		if (choice == -1) {
-			choice = selection ? 1 : 0;
-		}
-
-		// Encode the choice
-		SecretPolynomial poly = new SecretPolynomial(getPoll().getTalliers()
-				.size(), choice);
 
 		// Create an email that can be sent to every tallier
 		List<String> talliers = getPoll().getTalliers();
@@ -118,13 +111,32 @@ public class Voter extends User implements JSONSerializable {
 				getPoll());
 	}
 
+	public void vote(Activity caller, boolean selection) {
+		if (!isReadyToVote()) {
+			Context context = caller.getApplicationContext();
+			CharSequence text = "You need a key from every tallier to vote.";
+			int duration = Toast.LENGTH_SHORT;
+			Toast.makeText(context, text, duration).show();
+			return;
+		}
+
+		if (poly == null) {
+			int choice = selection ? 1 : 0;
+
+			// Encode the choice
+			poly = new SecretPolynomial(getPoll().getTalliers().size(), choice);
+		}
+
+		vote(caller);
+	}
+
 	/**
 	 * Test whether I've already voted
 	 * 
 	 * @return
 	 */
 	public boolean hasVoted() {
-		return choice != -1;
+		return poly != null;
 	}
 
 	/**
@@ -133,7 +145,10 @@ public class Voter extends User implements JSONSerializable {
 	 * @return
 	 */
 	public int getChoice() {
-		return choice;
+		if (poly == null)
+			return -1;
+		else
+			return poly.getSecret();
 	}
 
 	@Override
@@ -152,7 +167,10 @@ public class Voter extends User implements JSONSerializable {
 		}
 		obj.put(Voter.JSON_KEYS, arr);
 
-		obj.put(Voter.JSON_CHOICE, choice);
+		if (poly == null)
+			obj.put(JSON_CHOICE, JSONObject.NULL);
+		else
+			obj.put(Voter.JSON_CHOICE, poly.toJson());
 
 		return obj;
 	}
@@ -182,9 +200,16 @@ public class Voter extends User implements JSONSerializable {
 				}
 			}
 
-			int choice = obj.getInt(Voter.JSON_CHOICE);
+			JSONObject polyObj = obj.getJSONObject(JSON_CHOICE);
+			SecretPolynomial poly;
+			if(polyObj.equals(JSONObject.NULL)) {
+				poly = null;
+			}
+			else {
+				poly = new SecretPolynomial.Deserializer().fromJson(polyObj);
+			}
 
-			return new Voter(email, mPoll, keys, choice);
+			return new Voter(email, mPoll, keys, poly);
 		}
 	}
 }

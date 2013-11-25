@@ -62,24 +62,25 @@ public class ViewPoll extends Activity {
 			displayInfo(R.string.view_poll_not_participant);
 		}
 
+		// TODO create onclicks to replace DoNothings
 		if (v != null && !v.isReadyToVote()) {
 			displayInfo(R.string.view_poll_need_keys);
 		} else if (v != null && v.isReadyToVote() && !v.hasVoted()) {
-			displayTwoButtons(R.string.no, new DoNothing(), R.string.yes,
-					new DoNothing());
+			displayTwoButtons(R.string.no, new SendVoteButton(mId, this, false), R.string.yes,
+					new SendVoteButton(mId, this, true));
 		} else if (v != null && v.hasVoted()) {
-			displayOneButton(R.string.view_poll_resend_vote, new DoNothing());
+			displayOneButton(R.string.view_poll_resend_vote, new SendVoteButton(mId, this, null));
 		}
 
 		if (t != null) {
 			displayOneButton(R.string.view_poll_send_pubkey_label,
-					new DoNothing());
+					new SendPubKeyButton(mId, this));
 		}
 
 		if (t != null && !t.hasAllVotes()) {
 			displayInfo(R.string.view_poll_need_votes);
 		} else if (t != null && t.hasAllVotes() && !t.hasResults()) {
-			displayOneButton(R.string.view_poll_send_point, new DoNothing());
+			displayOneButton(R.string.view_poll_send_point, new SendResultButton(mId, this));
 		} else if (t != null && t.hasResults()) {
 			displayOneButton(R.string.view_poll_count_votes, new DoNothing());
 		}

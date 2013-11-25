@@ -125,8 +125,8 @@ public class Tallier extends User implements JSONSerializable {
 		// Send the result out to all of the voters
 		Poll p = this.getPoll();
 
-		// Get list of people to send public key to
-		String[] recipients = (String[]) p.getVoters().toArray();
+		// Get list of people to send result to
+		String[] recipients = (String[]) p.getTalliers().toArray();
 
 		// Construct and send the email
 		String title = "Securevote: Result From Tallier " + tallierNum;
@@ -144,6 +144,23 @@ public class Tallier extends User implements JSONSerializable {
 		Email email = new Email(title, caller.getResources().getString(
 				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
+	}
+	
+	public void receiveResult(Activity caller, SecretPoint point) {
+		points.add(point);
+	}
+	
+	public int getFinalSum(Activity caller) {
+		if(!hasAllVotes()) {
+			Context context = caller.getApplicationContext();
+			CharSequence text = "We do not have all results yet.";
+			int duration = Toast.LENGTH_SHORT;
+			Toast.makeText(context, text, duration).show();
+			return -1;
+		}
+		
+		SecretPolynomial poly = new SecretPolynomial((SecretPoint[]) points.toArray());
+		return poly.getSecret();
 	}
 
 	/**
