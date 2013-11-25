@@ -48,7 +48,6 @@ public class MainActivity extends Activity {
 
 		mPollList = (ListView) findViewById(R.id.poll_list);
 		mCreatePoll = (Button) findViewById(R.id.create_poll);
-		// testButton = (Button) findViewById(R.id.button1);
 
 		mPollList.setAdapter(mPollAdapter);
 		mPollList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -133,7 +132,7 @@ public class MainActivity extends Activity {
 			Log.i(MainActivity.class.getSimpleName(), fileContents);
 		}
 
-		ProtocolHandler.handle(json);
+		ProtocolHandler.handle(json, this);
 	}
 
 	@Override
