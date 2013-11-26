@@ -66,6 +66,7 @@ public class Tallier extends User implements JSONSerializable {
 		this.partialSums = new TreeSet<EncryptedPoint>();
 		this.tallierNum = poll.getTalliers().indexOf(email);
 		this.votes = votes;
+		this.hiddenVotes = new HashSet<GroupElement>();
 		this.partialSums = points;
 	}
 
@@ -162,7 +163,11 @@ public class Tallier extends User implements JSONSerializable {
 		String title = "Securevote: Result From Tallier " + tallierNum;
 		String attach;
 		try {
-			attach = result.toJson().toString();
+			JSONObject obj = new JSONObject();
+			obj.put(Constants.JSON_POLL_ID, p.getId());
+			obj.put(Constants.JSON_SHARE, result.toJson());
+			obj.put(Constants.JSON_PHASE, Constants.PHASE_SHARE);
+			attach = obj.toString();
 		} catch (JSONException e) {
 			Context context = caller.getApplicationContext();
 			CharSequence text = "Failed to encode result as a JSON object.";
@@ -176,7 +181,7 @@ public class Tallier extends User implements JSONSerializable {
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
-	public void receiveResult(Activity caller, EncryptedPoint point) {
+	public void receiveResult(Context caller, EncryptedPoint point) {
 		partialSums.add(point);
 	}
 

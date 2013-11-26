@@ -85,7 +85,8 @@ public class ViewPoll extends Activity {
 			displayOneButton(R.string.view_poll_send_point,
 					new SendResultButton(mId, this));
 		} else if (t != null && t.hasResults()) {
-			displayOneButton(R.string.view_poll_count_votes, new DoNothing());
+			displayOneButton(R.string.view_poll_count_votes,
+					new GetFinalSumButton(mId, this));
 		}
 	}
 
@@ -157,11 +158,5 @@ public class ViewPoll extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	private static class DoNothing implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-		}
 	}
 }

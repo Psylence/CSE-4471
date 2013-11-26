@@ -102,7 +102,8 @@ public class Voter extends User implements JSONSerializable {
 		JSONObject obj = new JSONObject();
 		try {
 			for (int i = 0; i < talliers.size(); i++) {
-				EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
+				EncryptedPoint p = new EncryptedPoint(poly.getPoint(i + 1),
+						keys[i]);
 				arr.put(p.toJson());
 			}
 			obj.put(Constants.JSON_PHASE, Constants.PHASE_VOTE);
@@ -134,15 +135,12 @@ public class Voter extends User implements JSONSerializable {
 		}
 
 		if (poly == null) {
-			poly = new SecretPolynomial(getPoll().getTalliers().size(),
+			poly = new SecretPolynomial(getPoll().getTalliers().size() - 1,
 					getPoll().getGroup().order());
 			BigInteger vote = poly.getSecret().add(
 					selection ? BigInteger.ONE : BigInteger.ZERO);
 			hiddenVote = getPoll().getg().exp(vote);
 
-			// Encode the choice
-			poly = new SecretPolynomial(getPoll().getTalliers().size(),
-					getPoll().getGroup().order());
 		}
 
 		vote(caller);

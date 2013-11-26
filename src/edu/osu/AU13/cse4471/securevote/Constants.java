@@ -11,10 +11,12 @@ public class Constants {
 	public static final String JSON_KEY = "public_key";
 	public static final String JSON_KEY_FROM = "key_from";
 	public static final String JSON_HIDDEN_VOTE = "hidden_vote";
+	public static final String JSON_SHARE = "share";
 
 	public static final String PHASE_NEWPOLL = "new_poll";
 	public static final String PHASE_VOTE = "vote";
 	public static final String PHASE_RESULT_POINT = "result_point";
 	public static final String PHASE_PUBLIC_KEY = "public_key";
+	public static final String PHASE_SHARE = "share";
 
 }

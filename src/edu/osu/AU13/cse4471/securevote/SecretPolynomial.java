@@ -39,12 +39,12 @@ public class SecretPolynomial implements JSONSerializable {
 		}
 
 		// Calculate the points
-		points = new SecretPoint[order + 1];
-		for (int i = 0; i <= order; i++) {
+		points = new SecretPoint[order + 2];
+		for (int i = 0; i <= order + 1; i++) {
 			// Calculate the y value of a point
 			BigInteger sum = BigInteger.ZERO;
 			BigInteger curPow = BigInteger.ONE;
-			BigInteger x = BigInteger.valueOf(i + 1);
+			BigInteger x = BigInteger.valueOf(i);
 			for (int j = order; j >= 0; j--) {
 				sum = sum.add(curPow.multiply(coefficents[j]));
 				curPow = curPow.multiply(x);
@@ -56,13 +56,13 @@ public class SecretPolynomial implements JSONSerializable {
 
 	public SecretPolynomial(SecretPoint[] points) {
 		this.points = points;
-		order = points.length - 1;
+		order = points.length - 2;
 	}
 
 	public SecretPoint getPoint(int x) {
-		if (x < 0 || x >= order) {
+		if (x <= 0 || x > order + 1) {
 			throw new IndexOutOfBoundsException(
-					"Must provide a value for x in the range [0, order - 1].");
+					"Must provide a value for x in the range [0, order].");
 		}
 		return points[x];
 	}

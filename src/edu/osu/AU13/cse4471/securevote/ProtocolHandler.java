@@ -35,10 +35,30 @@ public class ProtocolHandler {
 				ProtocolHandler.receiveVote(json, con);
 			} else if (Constants.PHASE_PUBLIC_KEY.equals(phase)) {
 				ProtocolHandler.receivePublicKey(json, con);
+			} else if (Constants.PHASE_SHARE.equals(phase)) {
+				ProtocolHandler.receiveShare(json, con);
 			}
+
 		} catch (JSONException e) {
 			Log.e(ProtocolHandler.class.getSimpleName(), "JSON parse error", e);
 		}
+	}
+
+	private static void receiveShare(JSONObject json, Context con)
+			throws JSONException {
+		UUID id = UUID.fromString(json.getString(Constants.JSON_POLL_ID));
+		Tallier t = DiskPersister.getInst().loadTallier(id, con);
+		if (t == null) {
+			Toast.makeText(con, "You ain't a tallier", Toast.LENGTH_SHORT)
+					.show();
+			return;
+		}
+		Poll p = t.getPoll();
+
+		EncryptedPoint pt = new EncryptedPoint.Deserializer(p.getGroup())
+				.fromJson(json.getJSONObject(Constants.JSON_SHARE));
+
+		t.receiveResult(con, pt);
 	}
 
 	private static void receivePublicKey(JSONObject json, Context con)
