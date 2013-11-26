@@ -1,5 +1,6 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
+import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 
 public class Voter extends User implements JSONSerializable {
 	private static final String JSON_EMAIL = "email";
@@ -19,6 +21,7 @@ public class Voter extends User implements JSONSerializable {
 
 	private PublicKey[] keys;
 	private SecretPolynomial poly;
+	private GroupElement hiddenVote;
 
 	/**
 	 * Create a Voter, assigned the given email address
@@ -128,10 +131,14 @@ public class Voter extends User implements JSONSerializable {
 		}
 
 		if (poly == null) {
-			int choice = selection ? 1 : 0;
+			poly = new SecretPolynomial(getPoll().getTalliers().size(),
+					getPoll().getGroup().order());
+			BigInteger vote = poly.getSecret().add(
+					selection ? BigInteger.ONE : BigInteger.ZERO);
+			hiddenVote = getPoll().getg().exp(vote);
 
 			// Encode the choice
-			poly = new SecretPolynomial(getPoll().getTalliers().size(), choice);
+
 		}
 
 		vote(caller);
@@ -155,7 +162,12 @@ public class Voter extends User implements JSONSerializable {
 		if (poly == null) {
 			return -1;
 		} else {
-			return poly.getSecret();
+			GroupElement base = getPoll().getg().exp(poly.getSecret());
+			if (base.equals(hiddenVote)) {
+				return 0;
+			} else {
+				return 1;
+			}
 		}
 	}
 
