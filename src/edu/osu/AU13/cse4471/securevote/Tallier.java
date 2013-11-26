@@ -194,8 +194,8 @@ public class Tallier extends User implements JSONSerializable {
 			return -1;
 		}
 
-		EncryptedPoint[] ps = (EncryptedPoint[]) partialSums.toArray();
-		GroupElement[] gs = (GroupElement[]) hiddenVotes.toArray();
+		EncryptedPoint[] ps = partialSums.toArray(new EncryptedPoint[0]);
+		GroupElement[] gs = hiddenVotes.toArray(new GroupElement[0]);
 
 		// Get the votes obscured by the secret
 		GroupElement elemResult = gs[0];
