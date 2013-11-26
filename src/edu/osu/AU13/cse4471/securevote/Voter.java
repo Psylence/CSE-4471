@@ -220,12 +220,13 @@ public class Voter extends User implements JSONSerializable {
 				}
 			}
 
-			JSONObject polyObj = obj.getJSONObject(Voter.JSON_CHOICE);
+			Object polyObj = obj.get(Voter.JSON_CHOICE);
 			SecretPolynomial poly;
-			if (polyObj.equals(JSONObject.NULL)) {
-				poly = null;
+			if (polyObj instanceof JSONObject) {
+				poly = new SecretPolynomial.Deserializer()
+						.fromJson((JSONObject) polyObj);
 			} else {
-				poly = new SecretPolynomial.Deserializer().fromJson(polyObj);
+				poly = null;
 			}
 
 			GroupElement hiddenVote;
