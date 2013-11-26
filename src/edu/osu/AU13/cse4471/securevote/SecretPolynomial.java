@@ -17,7 +17,6 @@ public class SecretPolynomial implements JSONSerializable {
 	private static final String JSON_POINTS = "points";
 
 	private int order;
-	private int secret;
 	private SecretPoint[] points;
 
 	/**
@@ -30,7 +29,6 @@ public class SecretPolynomial implements JSONSerializable {
 	 */
 	public SecretPolynomial(int order, BigInteger coeffBound) {
 		this.order = order;
-		this.secret = secret;
 
 		// Create some random integer coefficents from which to construct the
 		// points
@@ -67,7 +65,7 @@ public class SecretPolynomial implements JSONSerializable {
 	/**
 	 * Uses interpolation to determine the y intercept.
 	 */
-	private void computeSecret() {
+	/*private void computeSecret() {
 
 		double sum = 0.0;
 		for (int i = 0; i < order; i++) {
@@ -90,7 +88,7 @@ public class SecretPolynomial implements JSONSerializable {
 			throw new IllegalArgumentException(
 					"These points do not encode an integer secret.");
 		}
-	}
+	}*/
 
 	public SecretPoint getPoint(int x) {
 		if (x < 0 || x >= order) {

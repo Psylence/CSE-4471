@@ -222,9 +222,8 @@ public class Tallier extends User implements JSONSerializable {
 		// Compare elem with potential values
 		int potential;
 		int voters = getPoll().getVoters().size();
-		Group group = getPoll().getGroup();
 		for(potential = 0; potential < voters; potential++) {
-			GroupElement potentialElem = group.getElement(potential);
+			GroupElement potentialElem = getPoll().getg().exp(BigInteger.valueOf(potential));
 			potentialElem = potentialElem.mult(elemSecret);
 			if(potentialElem.equals(elemResult)) {
 				return potential;
