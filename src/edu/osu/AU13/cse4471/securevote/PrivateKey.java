@@ -22,14 +22,15 @@ public class PrivateKey implements JSONSerializable {
 
 	public PrivateKey(Group group, GroupElement g) {
 		// Get a random large integer
-		privateKey = MathUtils.randomBigInteger(group.order());
+		this.privateKey = MathUtils.randomBigInteger(group.order());
 
 		// Generate the public key
 		GroupElement key = group.exponent(g, privateKey);
-		publicKey = new PublicKey(key);
+		this.publicKey = new PublicKey(key);
+		this.group = group;
 
 	}
-	
+
 	public PrivateKey(BigInteger privateKey, PublicKey publicKey, Group group) {
 		this.privateKey = privateKey;
 		this.publicKey = publicKey;
@@ -48,9 +49,9 @@ public class PrivateKey implements JSONSerializable {
 	public JSONObject toJson() throws JSONException {
 		JSONObject obj = new JSONObject();
 
-		obj.put(JSON_PRIV, privateKey.toString());
-		obj.put(JSON_PUB, publicKey.toJson());
-		obj.put(JSON_GROUP, group.toString());
+		obj.put(PrivateKey.JSON_PRIV, privateKey.toString());
+		obj.put(PrivateKey.JSON_PUB, publicKey.toJson());
+		obj.put(PrivateKey.JSON_GROUP, group.toString());
 
 		return obj;
 	}
@@ -65,11 +66,12 @@ public class PrivateKey implements JSONSerializable {
 			BigInteger privateKey;
 			PublicKey publicKey;
 			Group group;
-			
-			privateKey = new BigInteger(obj.getString(JSON_PRIV));
-			group = Group.fromString(obj.getString(JSON_GROUP));
-			publicKey = new PublicKey.Deserializer(group).fromJson((obj.getJSONObject(JSON_PUB)));
-			
+
+			privateKey = new BigInteger(obj.getString(PrivateKey.JSON_PRIV));
+			group = Group.fromString(obj.getString(PrivateKey.JSON_GROUP));
+			publicKey = new PublicKey.Deserializer(group).fromJson((obj
+					.getJSONObject(PrivateKey.JSON_PUB)));
+
 			return new PrivateKey(privateKey, publicKey, group);
 		}
 

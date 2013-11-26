@@ -43,21 +43,21 @@ public class Voter extends User implements JSONSerializable {
 		this.poly = poly;
 	}
 
-	public void receiveKey(Activity caller, String email, PublicKey key) {
+	public void receiveKey(Context con, String email, PublicKey key) {
 		// Find which tallier this key is from
 		List<String> talliers = getPoll().getTalliers();
 		int index = talliers.indexOf(email);
 
 		// Ensure that this was sent from one of the talliers
 		if (index == -1) {
-			Context context = caller.getApplicationContext();
+			Context context = con.getApplicationContext();
 			CharSequence text = "This key is from an invalid email address.";
 			int duration = Toast.LENGTH_SHORT;
 			Toast.makeText(context, text, duration).show();
 		}
 		// Throw an alert if the key had already been assigned
 		else if (keys[index] != null) {
-			Context context = caller.getApplicationContext();
+			Context context = con.getApplicationContext();
 			CharSequence text = "This key was already assigned.";
 			int duration = Toast.LENGTH_SHORT;
 			Toast.makeText(context, text, duration).show();
@@ -65,6 +65,9 @@ public class Voter extends User implements JSONSerializable {
 		// Otherwise, assign the key
 		else {
 			keys[index] = key;
+			DiskPersister dp = DiskPersister.getInst();
+			dp.save(getPoll(), this, dp.loadTallier(getPoll().getId(), con),
+					con);
 		}
 	}
 
@@ -91,23 +94,27 @@ public class Voter extends User implements JSONSerializable {
 
 		String subject = "Securevoting: Encrypted Vote";
 		JSONArray arr = new JSONArray();
-
-		for (int i = 0; i < talliers.size(); i++) {
-			EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
-			try {
+		JSONObject obj = new JSONObject();
+		try {
+			for (int i = 0; i < talliers.size(); i++) {
+				EncryptedPoint p = new EncryptedPoint(poly.getPoint(i), keys[i]);
 				arr.put(p.toJson());
-			} catch (JSONException e) {
-				Context context = caller.getApplicationContext();
-				CharSequence text = "Failed to encode point as JSON object.";
-				int duration = Toast.LENGTH_SHORT;
-				Toast.makeText(context, text, duration).show();
-				return;
 			}
+			obj.put(Constants.JSON_PHASE, Constants.PHASE_VOTE);
+			obj.put(Constants.JSON_ENCR_POINTS, arr);
+			obj.put(Constants.JSON_POLL_ID, getPoll().getId());
+			obj.put(Constants.JSON_VOTE_FROM, getEmail());
+		} catch (JSONException e) {
+			Context context = caller.getApplicationContext();
+			CharSequence text = "Failed to encode point as JSON object.";
+			int duration = Toast.LENGTH_SHORT;
+			Toast.makeText(context, text, duration).show();
+			return;
 		}
 
 		Email email = new Email(subject, caller.getResources().getString(
-				R.string.email_body), arr.toString());
-		Emailer.sendEmail(email, (String[]) talliers.toArray(), caller,
+				R.string.email_body), obj.toString());
+		Emailer.sendEmail(email, talliers.toArray(new String[0]), caller,
 				getPoll());
 	}
 
@@ -145,10 +152,11 @@ public class Voter extends User implements JSONSerializable {
 	 * @return
 	 */
 	public int getChoice() {
-		if (poly == null)
+		if (poly == null) {
 			return -1;
-		else
+		} else {
 			return poly.getSecret();
+		}
 	}
 
 	@Override
@@ -167,10 +175,11 @@ public class Voter extends User implements JSONSerializable {
 		}
 		obj.put(Voter.JSON_KEYS, arr);
 
-		if (poly == null)
-			obj.put(JSON_CHOICE, JSONObject.NULL);
-		else
+		if (poly == null) {
+			obj.put(Voter.JSON_CHOICE, JSONObject.NULL);
+		} else {
 			obj.put(Voter.JSON_CHOICE, poly.toJson());
+		}
 
 		return obj;
 	}
@@ -192,20 +201,19 @@ public class Voter extends User implements JSONSerializable {
 			PublicKey.Deserializer d = new PublicKey.Deserializer(
 					mPoll.getGroup());
 			for (int i = 0; i < keys.length; i++) {
-				JSONObject key = (JSONObject) arr.get(i);
-				if (key.equals(null)) {
-					keys[i] = null;
+				Object key = arr.get(i);
+				if (key instanceof JSONObject) {
+					keys[i] = d.fromJson((JSONObject) key);
 				} else {
-					keys[i] = d.fromJson(key);
+					keys[i] = null;
 				}
 			}
 
-			JSONObject polyObj = obj.getJSONObject(JSON_CHOICE);
+			JSONObject polyObj = obj.getJSONObject(Voter.JSON_CHOICE);
 			SecretPolynomial poly;
-			if(polyObj.equals(JSONObject.NULL)) {
+			if (polyObj.equals(JSONObject.NULL)) {
 				poly = null;
-			}
-			else {
+			} else {
 				poly = new SecretPolynomial.Deserializer().fromJson(polyObj);
 			}
 

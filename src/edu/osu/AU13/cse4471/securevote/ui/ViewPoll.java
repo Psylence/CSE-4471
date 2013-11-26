@@ -66,10 +66,12 @@ public class ViewPoll extends Activity {
 		if (v != null && !v.isReadyToVote()) {
 			displayInfo(R.string.view_poll_need_keys);
 		} else if (v != null && v.isReadyToVote() && !v.hasVoted()) {
-			displayTwoButtons(R.string.no, new SendVoteButton(mId, this, false), R.string.yes,
+			displayTwoButtons(R.string.no,
+					new SendVoteButton(mId, this, false), R.string.yes,
 					new SendVoteButton(mId, this, true));
 		} else if (v != null && v.hasVoted()) {
-			displayOneButton(R.string.view_poll_resend_vote, new SendVoteButton(mId, this, null));
+			displayOneButton(R.string.view_poll_resend_vote,
+					new SendVoteButton(mId, this, null));
 		}
 
 		if (t != null) {
@@ -80,7 +82,8 @@ public class ViewPoll extends Activity {
 		if (t != null && !t.hasAllVotes()) {
 			displayInfo(R.string.view_poll_need_votes);
 		} else if (t != null && t.hasAllVotes() && !t.hasResults()) {
-			displayOneButton(R.string.view_poll_send_point, new SendResultButton(mId, this));
+			displayOneButton(R.string.view_poll_send_point,
+					new SendResultButton(mId, this));
 		} else if (t != null && t.hasResults()) {
 			displayOneButton(R.string.view_poll_count_votes, new DoNothing());
 		}
@@ -103,6 +106,8 @@ public class ViewPoll extends Activity {
 		b0.setOnClickListener(l0);
 		b1.setText(button1Text);
 		b1.setOnClickListener(l1);
+		horiz.addView(b0);
+		horiz.addView(b1);
 		mContents.addView(horiz);
 	}
 
