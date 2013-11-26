@@ -52,12 +52,13 @@ public class SecretPolynomial implements JSONSerializable {
 				curPow = curPow.multiply(x);
 			}
 
-			points[i] = new SecretPoint(i + 1, sum);
+			points[i] = new SecretPoint(i, sum);
 		}
 	}
 
 	public SecretPolynomial(SecretPoint[] points) {
 		this.points = points;
+<<<<<<< HEAD
 		order = points.length;
 		computeSecret();
 	}
@@ -89,6 +90,10 @@ public class SecretPolynomial implements JSONSerializable {
 					"These points do not encode an integer secret.");
 		}
 	}*/
+=======
+		order = points.length - 1;
+	}
+>>>>>>> 0739b70308396d50113cc439adc9b547d8b395ff
 
 	public SecretPoint getPoint(int x) {
 		if (x < 0 || x >= order) {
@@ -98,8 +103,8 @@ public class SecretPolynomial implements JSONSerializable {
 		return points[x];
 	}
 
-	public int getSecret() {
-		return secret;
+	public BigInteger getSecret() {
+		return points[0].getY();
 	}
 
 	@Override
