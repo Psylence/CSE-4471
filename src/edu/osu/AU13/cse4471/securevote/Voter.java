@@ -18,6 +18,7 @@ public class Voter extends User implements JSONSerializable {
 	private static final String JSON_EMAIL = "email";
 	private static final String JSON_KEYS = "keys";
 	private static final String JSON_CHOICE = "choice";
+	public static final String JSON_HIDDEN_VOTE = "hidden_vote";
 
 	private PublicKey[] keys;
 	private SecretPolynomial poly;
@@ -40,10 +41,11 @@ public class Voter extends User implements JSONSerializable {
 	}
 
 	public Voter(String email, Poll poll, PublicKey[] keys,
-			SecretPolynomial poly) {
+			SecretPolynomial poly, GroupElement hiddenVote) {
 		super(email, poll);
 		this.keys = keys;
 		this.poly = poly;
+		this.hiddenVote = hiddenVote;
 	}
 
 	public void receiveKey(Context con, String email, PublicKey key) {
@@ -154,21 +156,12 @@ public class Voter extends User implements JSONSerializable {
 	}
 
 	/**
-	 * If I've already voted, return my choice. Otherwise, return -1
+	 * If I've already voted, return my choice. Otherwise, return null
 	 * 
 	 * @return
 	 */
-	public int getChoice() {
-		if (poly == null) {
-			return -1;
-		} else {
-			GroupElement base = getPoll().getg().exp(poly.getSecret());
-			if (base.equals(hiddenVote)) {
-				return 0;
-			} else {
-				return 1;
-			}
-		}
+	public GroupElement getHiddenVote() {
+		return hiddenVote;
 	}
 
 	@Override
@@ -191,6 +184,12 @@ public class Voter extends User implements JSONSerializable {
 			obj.put(Voter.JSON_CHOICE, JSONObject.NULL);
 		} else {
 			obj.put(Voter.JSON_CHOICE, poly.toJson());
+		}
+
+		if (hiddenVote == null) {
+			obj.put(Voter.JSON_HIDDEN_VOTE, JSONObject.NULL);
+		} else {
+			obj.put(Voter.JSON_HIDDEN_VOTE, hiddenVote.toString());
 		}
 
 		return obj;
@@ -229,7 +228,15 @@ public class Voter extends User implements JSONSerializable {
 				poly = new SecretPolynomial.Deserializer().fromJson(polyObj);
 			}
 
-			return new Voter(email, mPoll, keys, poly);
+			GroupElement hiddenVote;
+			Object o = obj.get(Voter.JSON_HIDDEN_VOTE);
+			if (o instanceof String) {
+				hiddenVote = mPoll.getGroup().elementFromString((String) o);
+			} else {
+				hiddenVote = null;
+			}
+
+			return new Voter(email, mPoll, keys, poly, hiddenVote);
 		}
 	}
 }
