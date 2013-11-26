@@ -100,11 +100,7 @@ public class Tallier extends User implements JSONSerializable {
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
-<<<<<<< HEAD
 	public void receiveVote(Activity caller, GroupElement hiddenVote, List<EncryptedPoint> poly,
-=======
-	public void receiveVote(Context caller, List<EncryptedPoint> poly,
->>>>>>> a1c99df977fff54502aa4ed7a81f2df71d00928b
 			String email) {
 		EncryptedPoint vote = null;
 
@@ -151,15 +147,11 @@ public class Tallier extends User implements JSONSerializable {
 		return result;
 	}
 
-<<<<<<< HEAD
 	public void sendResult(Activity caller) {
 		// Calculate the result
 		GroupElement product = getResultPoint();
 
 		EncryptedPoint result = new EncryptedPoint(tallierNum, product);
-=======
-		SecretPoint result = new SecretPoint(tallierNum, total);
->>>>>>> a1c99df977fff54502aa4ed7a81f2df71d00928b
 
 		// Send the result out to all of the voters
 		Poll p = this.getPoll();
@@ -184,22 +176,12 @@ public class Tallier extends User implements JSONSerializable {
 				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
-
-<<<<<<< HEAD
 	public void receiveResult(Activity caller, EncryptedPoint point) {
 		partialSums.add(point);
 	}
 
 	public int getFinalSum(Activity caller) {
 		if (!hasAllVotes()) { // TODO should be results
-=======
-	public void receiveResult(Activity caller, SecretPoint point) {
-		points.add(point);
-	}
-
-	public int getFinalSum(Activity caller) {
-		if (!hasAllVotes()) {
->>>>>>> a1c99df977fff54502aa4ed7a81f2df71d00928b
 			Context context = caller.getApplicationContext();
 			CharSequence text = "We do not have all results yet.";
 			int duration = Toast.LENGTH_SHORT;
@@ -207,7 +189,6 @@ public class Tallier extends User implements JSONSerializable {
 			return -1;
 		}
 
-<<<<<<< HEAD
 		EncryptedPoint[] ps = (EncryptedPoint[]) partialSums.toArray();
 		
 		// Get the votes obscured by the secret
@@ -250,11 +231,6 @@ public class Tallier extends User implements JSONSerializable {
 			}
 		}
 		throw new RuntimeException("Failed to find the result.");
-=======
-		SecretPolynomial poly = new SecretPolynomial(
-				points.toArray(new SecretPoint[0]));
-		return poly.getSecret();
->>>>>>> a1c99df977fff54502aa4ed7a81f2df71d00928b
 	}
 
 	/**
