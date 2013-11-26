@@ -109,6 +109,7 @@ public class Voter extends User implements JSONSerializable {
 			obj.put(Constants.JSON_ENCR_POINTS, arr);
 			obj.put(Constants.JSON_POLL_ID, getPoll().getId());
 			obj.put(Constants.JSON_VOTE_FROM, getEmail());
+			obj.put(Constants.JSON_HIDDEN_VOTE, hiddenVote.toString());
 		} catch (JSONException e) {
 			Context context = caller.getApplicationContext();
 			CharSequence text = "Failed to encode point as JSON object.";
