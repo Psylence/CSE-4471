@@ -190,11 +190,12 @@ public class Tallier extends User implements JSONSerializable {
 		}
 
 		EncryptedPoint[] ps = (EncryptedPoint[]) partialSums.toArray();
+		GroupElement[] gs = (GroupElement[]) hiddenVotes.toArray();
 		
 		// Get the votes obscured by the secret
-		GroupElement elemResult = ps[0].getY();
-		for(int i = 1; i < ps.length; i++) {
-			elemResult = elemResult.mult(ps[i].getY());
+		GroupElement elemResult = gs[0];
+		for(int i = 1; i < gs.length; i++) {
+			elemResult = elemResult.mult(gs[i]);
 		}
 		
 		// Get the secret.
@@ -222,14 +223,18 @@ public class Tallier extends User implements JSONSerializable {
 		// Compare elem with potential values
 		int potential;
 		int voters = getPoll().getVoters().size();
-		for(potential = 0; potential < voters; potential++) {
+		for(potential = 0; potential <= voters; potential++) {
 			GroupElement potentialElem = getPoll().getg().exp(BigInteger.valueOf(potential));
 			potentialElem = potentialElem.mult(elemSecret);
 			if(potentialElem.equals(elemResult)) {
 				return potential;
 			}
 		}
-		throw new RuntimeException("Failed to find the result.");
+		Context context = caller.getApplicationContext();
+		CharSequence text = "ERROR: failed to find an appropriate result.";
+		int duration = Toast.LENGTH_SHORT;
+		Toast.makeText(context, text, duration).show();
+		return -1;
 	}
 
 	/**
