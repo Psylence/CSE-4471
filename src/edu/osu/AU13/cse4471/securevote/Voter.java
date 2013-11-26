@@ -131,7 +131,7 @@ public class Voter extends User implements JSONSerializable {
 			int choice = selection ? 1 : 0;
 
 			// Encode the choice
-			poly = new SecretPolynomial(getPoll().getTalliers().size(), choice);
+			poly = new SecretPolynomial(getPoll().getTalliers().size());
 		}
 
 		vote(caller);
