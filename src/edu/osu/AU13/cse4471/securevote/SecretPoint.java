@@ -1,5 +1,6 @@
 package edu.osu.AU13.cse4471.securevote;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Random;
 
@@ -21,9 +22,9 @@ public class SecretPoint implements Comparable<SecretPoint>, JSONSerializable {
 	private static final String JSON_Y = "y";
 
 	private int x;
-	private int y;
+	private BigInteger y;
 
-	public SecretPoint(int x, int y) {
+	public SecretPoint(int x, BigInteger y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -32,7 +33,7 @@ public class SecretPoint implements Comparable<SecretPoint>, JSONSerializable {
 		return x;
 	}
 
-	public int getY() {
+	public BigInteger getY() {
 		return y;
 	}
 
@@ -46,7 +47,7 @@ public class SecretPoint implements Comparable<SecretPoint>, JSONSerializable {
 		JSONObject obj = new JSONObject();
 
 		obj.put(JSON_X, x);
-		obj.put(JSON_Y, y);
+		obj.put(JSON_Y, y.toString());
 
 		return obj;
 	}
@@ -58,10 +59,11 @@ public class SecretPoint implements Comparable<SecretPoint>, JSONSerializable {
 
 		@Override
 		public SecretPoint fromJson(JSONObject obj) throws JSONException {
-			int x, y;
+			int x;
+			BigInteger y;
 
 			x = Integer.parseInt(obj.getString(JSON_X));
-			y = Integer.parseInt(obj.getString(JSON_Y));
+			y = new BigInteger(obj.getString(JSON_Y));
 
 			return new SecretPoint(x, y);
 		}
