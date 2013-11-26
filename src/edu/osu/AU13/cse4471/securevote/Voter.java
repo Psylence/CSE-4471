@@ -140,7 +140,8 @@ public class Voter extends User implements JSONSerializable {
 			hiddenVote = getPoll().getg().exp(vote);
 
 			// Encode the choice
-			poly = new SecretPolynomial(getPoll().getTalliers().size(), getPoll().getGroup().order());
+			poly = new SecretPolynomial(getPoll().getTalliers().size(),
+					getPoll().getGroup().order());
 		}
 
 		vote(caller);
