@@ -58,42 +58,8 @@ public class SecretPolynomial implements JSONSerializable {
 
 	public SecretPolynomial(SecretPoint[] points) {
 		this.points = points;
-<<<<<<< HEAD
-		order = points.length;
-		computeSecret();
-	}
-
-	/**
-	 * Uses interpolation to determine the y intercept.
-	 */
-	/*private void computeSecret() {
-
-		double sum = 0.0;
-		for (int i = 0; i < order; i++) {
-			double partialSum = points[i].getY();
-
-			for (int j = 0; j < order; j++) {
-				if (j == i) {
-					continue;
-				}
-				partialSum *= -points[j].getX();
-				partialSum /= (points[i].getX() - points[j].getX());
-			}
-
-			sum += partialSum;
-		}
-
-		secret = (int) sum;
-
-		if (sum - secret > SecretPolynomial.EPSILON) {
-			throw new IllegalArgumentException(
-					"These points do not encode an integer secret.");
-		}
-	}*/
-=======
 		order = points.length - 1;
 	}
->>>>>>> 0739b70308396d50113cc439adc9b547d8b395ff
 
 	public SecretPoint getPoint(int x) {
 		if (x < 0 || x >= order) {
