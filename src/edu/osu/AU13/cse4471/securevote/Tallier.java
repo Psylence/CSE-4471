@@ -151,7 +151,7 @@ public class Tallier extends User implements JSONSerializable {
 		// Calculate the result
 		GroupElement product = getResultPoint();
 
-		EncryptedPoint result = new EncryptedPoint(tallierNum, product);
+		EncryptedPoint result = new EncryptedPoint(tallierNum + 1, product);
 
 		// Send the result out to all of the voters
 		Poll p = this.getPoll();
@@ -207,14 +207,16 @@ public class Tallier extends User implements JSONSerializable {
 		GroupElement elemSecret = null;
 		for (int i = 0; i < ps.length; i++) {
 			GroupElement partial = ps[i].getY();
+			int xj = ps[i].getX();
 
 			double pow = 1.0;
 			for (int j = 0; j < ps.length; j++) {
+				int xm = ps[j].getX();
 				if (j == i) {
 					continue;
 				}
-				pow *= j + 1; // This needs to be j + 1 because of the actual x values of the coefficent
-				pow /= (j - i); // The +1's cancel for this one
+				pow *= -xm;
+				pow /= xj - xm;
 			}
 
 			partial = partial.exp(BigInteger.valueOf((int) pow));

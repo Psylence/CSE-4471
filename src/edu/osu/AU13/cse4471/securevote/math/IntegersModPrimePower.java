@@ -23,7 +23,7 @@ public class IntegersModPrimePower extends IntegersModM {
 	 * @return <code>generateRandom(64, 16)</code>;
 	 */
 	public static IntegersModPrimePower generateRandom() {
-		return IntegersModPrimePower.generateRandom(64, 16);
+		return IntegersModPrimePower.generateRandom(8, 2);
 	}
 
 	/**
