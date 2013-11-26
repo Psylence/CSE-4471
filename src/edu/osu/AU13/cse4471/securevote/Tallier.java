@@ -213,8 +213,8 @@ public class Tallier extends User implements JSONSerializable {
 				if (j == i) {
 					continue;
 				}
-				pow *= j;
-				pow /= (j - i);
+				pow *= j + 1; // This needs to be j + 1 because of the actual x values of the coefficent
+				pow /= (j - i); // The +1's cancel for this one
 			}
 
 			partial = partial.exp(BigInteger.valueOf((int) pow));
