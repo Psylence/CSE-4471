@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
+import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 import edu.osu.AU13.cse4471.securevote.ui.CreatePoll;
 
 public class ProtocolHandler {
@@ -56,7 +57,6 @@ public class ProtocolHandler {
 
 		UUID id = UUID.fromString(json.getString(Constants.JSON_POLL_ID));
 		Tallier t = DiskPersister.getInst().loadTallier(id, con);
-		Poll poll = DiskPersister.getInst().loadPoll(id, con);
 
 		if (t == null) {
 			Toast.makeText(
@@ -65,6 +65,8 @@ public class ProtocolHandler {
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
+
+		Poll poll = t.getPoll();
 
 		List<EncryptedPoint> points = new ArrayList<EncryptedPoint>();
 
@@ -76,7 +78,11 @@ public class ProtocolHandler {
 			points.add(deser.fromJson(arr.getJSONObject(i)));
 		}
 
-		t.receiveVote(con, points, json.getString(Constants.JSON_VOTE_FROM));
+		GroupElement hiddenVote = poll.getGroup().elementFromString(
+				json.getString(Constants.JSON_HIDDEN_VOTE));
+
+		t.receiveVote(con, hiddenVote, points,
+				json.getString(Constants.JSON_VOTE_FROM));
 
 	}
 

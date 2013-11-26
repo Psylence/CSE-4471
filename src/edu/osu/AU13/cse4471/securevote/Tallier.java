@@ -20,7 +20,6 @@ import android.content.Context;
 import android.widget.Toast;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONDeserializer;
 import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
-import edu.osu.AU13.cse4471.securevote.math.Group;
 import edu.osu.AU13.cse4471.securevote.math.GroupElement;
 
 public class Tallier extends User implements JSONSerializable {
@@ -100,8 +99,8 @@ public class Tallier extends User implements JSONSerializable {
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
 
-	public void receiveVote(Activity caller, GroupElement hiddenVote, List<EncryptedPoint> poly,
-			String email) {
+	public void receiveVote(Context caller, GroupElement hiddenVote,
+			List<EncryptedPoint> poly, String email) {
 		EncryptedPoint vote = null;
 
 		for (EncryptedPoint point : poly) {
@@ -176,6 +175,7 @@ public class Tallier extends User implements JSONSerializable {
 				R.string.email_body), attach);
 		Emailer.sendEmail(email, recipients, caller, getPoll());
 	}
+
 	public void receiveResult(Activity caller, EncryptedPoint point) {
 		partialSums.add(point);
 	}
@@ -191,26 +191,27 @@ public class Tallier extends User implements JSONSerializable {
 
 		EncryptedPoint[] ps = (EncryptedPoint[]) partialSums.toArray();
 		GroupElement[] gs = (GroupElement[]) hiddenVotes.toArray();
-		
+
 		// Get the votes obscured by the secret
 		GroupElement elemResult = gs[0];
-		for(int i = 1; i < gs.length; i++) {
+		for (int i = 1; i < gs.length; i++) {
 			elemResult = elemResult.mult(gs[i]);
 		}
-		
+
 		// Get the secret.
 		GroupElement elemSecret = null;
 		for (int i = 0; i < ps.length; i++) {
 			GroupElement partial = ps[i].getY();
-			
+
 			double pow = 1.0;
 			for (int j = 0; j < ps.length; j++) {
-				if (j == i)
+				if (j == i) {
 					continue;
+				}
 				pow *= j;
 				pow /= (j - i);
 			}
-			
+
 			partial = partial.exp(BigInteger.valueOf((int) pow));
 			if (i == 0) {
 				elemSecret = partial;
@@ -223,10 +224,11 @@ public class Tallier extends User implements JSONSerializable {
 		// Compare elem with potential values
 		int potential;
 		int voters = getPoll().getVoters().size();
-		for(potential = 0; potential <= voters; potential++) {
-			GroupElement potentialElem = getPoll().getg().exp(BigInteger.valueOf(potential));
+		for (potential = 0; potential <= voters; potential++) {
+			GroupElement potentialElem = getPoll().getg().exp(
+					BigInteger.valueOf(potential));
 			potentialElem = potentialElem.mult(elemSecret);
-			if(potentialElem.equals(elemResult)) {
+			if (potentialElem.equals(elemResult)) {
 				return potential;
 			}
 		}
@@ -259,13 +261,13 @@ public class Tallier extends User implements JSONSerializable {
 			arr.put(p.toJson());
 		}
 		obj.put(Tallier.JSON_RESULTS, arr);
-		
+
 		arr = new JSONArray();
 		for (GroupElement p : hiddenVotes) {
 			arr.put(p.toString());
 		}
 		obj.put(Tallier.JSON_HIDDEN, arr);
-		
+
 		return obj;
 	}
 
@@ -316,12 +318,11 @@ public class Tallier extends User implements JSONSerializable {
 			JSONArray arr = obj.getJSONArray(Tallier.JSON_RESULTS);
 			HashSet<EncryptedPoint> results = new HashSet<EncryptedPoint>(
 					JSONUtils.fromArray(arr, epd));
-			
 
 			arr = obj.getJSONArray(Tallier.JSON_HIDDEN);
 			ArrayList<String> strs = JSONUtils.fromArray(arr);
 			HashSet<GroupElement> hidden = new HashSet<GroupElement>();
-			for(String str : strs) {
+			for (String str : strs) {
 				hidden.add(mPoll.getGroup().elementFromString(str));
 			}
 

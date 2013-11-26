@@ -12,8 +12,6 @@ import edu.osu.AU13.cse4471.securevote.JSONUtils.JSONSerializable;
 import edu.osu.AU13.cse4471.securevote.math.MathUtils;
 
 public class SecretPolynomial implements JSONSerializable {
-	private static final double EPSILON = 0.0000001;
-
 	private static final String JSON_POINTS = "points";
 
 	private int order;
