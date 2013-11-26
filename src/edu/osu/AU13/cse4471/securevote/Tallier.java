@@ -252,7 +252,7 @@ public class Tallier extends User implements JSONSerializable {
 		JSONObject obj = new JSONObject();
 
 		obj.put(Tallier.JSON_EMAIL, getEmail());
-		obj.put(Tallier.JSON_PRIVKEY, privKey.getPublicKey().toString());
+		obj.put(Tallier.JSON_PRIVKEY, privKey.toJson());
 
 		JSONObject map = new JSONObject();
 		for (Entry<String, EncryptedPoint> entry : votes.entrySet()) {
@@ -305,8 +305,8 @@ public class Tallier extends User implements JSONSerializable {
 
 			// Deserialize the private key
 			PrivateKey privKey;
-			privKey = new PrivateKey.Deserializer().fromJson(obj
-					.getJSONObject(Tallier.JSON_PRIVKEY));
+			JSONObject privKeyObj = obj.getJSONObject(Tallier.JSON_PRIVKEY);
+			privKey = new PrivateKey.Deserializer().fromJson(privKeyObj);
 
 			// Get the current list of votes
 			Map<String, EncryptedPoint> map = new TreeMap<String, EncryptedPoint>();
